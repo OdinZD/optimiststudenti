@@ -28,7 +28,7 @@ final class AgeCategory
         ['key' => 'u16',   'label' => 'U16 · Kadeti',        'max' => 16,  'months' => 192],
         ['key' => 'u18',   'label' => 'U18 · Juniori',       'max' => 18,  'months' => 216],
         ['key' => 'u21',   'label' => 'U21',                 'max' => 21,  'months' => 252],
-        ['key' => 'sen',   'label' => 'Seniori',             'max' => 999, 'months' => 0],
+        ['key' => 'sen',   'label' => 'Seniori',             'max' => PHP_INT_MAX, 'months' => 0],
     ];
 
     private function __construct(

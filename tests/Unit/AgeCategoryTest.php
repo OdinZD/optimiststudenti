@@ -52,4 +52,22 @@ final class AgeCategoryTest extends TestCase
     {
         $this->assertNull(AgeCategory::for(null, CarbonImmutable::parse(self::TODAY)));
     }
+
+    /** A mistyped/ancient year (e.g. 0198) must resolve to Seniori, never throw. */
+    public function test_extreme_age_resolves_to_seniori(): void
+    {
+        $category = AgeCategory::for(CarbonImmutable::parse('0198-11-25'), CarbonImmutable::parse(self::TODAY));
+
+        $this->assertNotNull($category);
+        $this->assertSame('sen', $category->key);
+        $this->assertNull($category->crossover);
+    }
+
+    /** A far-future date (negative age, e.g. mid-typing) must not throw. */
+    public function test_future_birth_date_does_not_throw(): void
+    {
+        $category = AgeCategory::for(CarbonImmutable::parse('9999-01-01'), CarbonImmutable::parse(self::TODAY));
+
+        $this->assertNotNull($category);
+    }
 }

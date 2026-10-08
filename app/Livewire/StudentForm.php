@@ -63,7 +63,7 @@ final class StudentForm extends Component
         return [
             'lastName' => ['required', 'string', 'max:100'],
             'firstName' => ['required', 'string', 'max:100'],
-            'birthDate' => ['nullable', 'date', 'before_or_equal:today'],
+            'birthDate' => ['nullable', 'date', 'after_or_equal:1900-01-01', 'before_or_equal:today'],
             'oib' => ['nullable', new Oib, Rule::unique('students', 'oib')->ignore($this->studentId)],
             'locationId' => ['nullable', 'exists:locations,id'],
             'trainingGroupId' => ['nullable', 'exists:training_groups,id'],
@@ -90,6 +90,7 @@ final class StudentForm extends Component
             'lastName.required' => 'Obavezno polje',
             'firstName.required' => 'Obavezno polje',
             'birthDate.before_or_equal' => 'Datum rođenja ne može biti u budućnosti',
+            'birthDate.after_or_equal' => 'Provjeri datum rođenja',
             'oib.unique' => 'Polaznik s ovim OIB-om već postoji',
             'parentEmail.email' => 'Provjeri e-mail adresu',
             'nextGradeKyu.required' => 'Odaberi stupanj',
