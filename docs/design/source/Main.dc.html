@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Popis polaznika</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.ob,.ob *{box-sizing:border-box}
+.ob button,.ob input,.ob select,.ob textarea{font-family:inherit}
+.ob :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.ob-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ob-cards{display:none}
+@media (max-width:760px){
+  .ob-main{display:block!important;overflow-y:auto!important}
+  .ob-inner{display:block!important;padding-left:16px!important;padding-right:16px!important}
+  .ob-bar{padding-left:16px!important;padding-right:16px!important}
+  .ob-tbl{display:none!important}
+  .ob-cards{display:flex!important}
+  .ob-sel{max-width:none!important}
+  .ob-fsp{display:none!important}
+  .ob-fdel{order:3;flex:1 1 100%!important;justify-content:center}
+  .ob-ferr{order:-1;flex:1 1 100%!important}
+  .ob-fbtn{flex:1 1 0!important;padding-left:12px!important;padding-right:12px!important;white-space:nowrap}
+}
+</style>
+</helmet>
+
+<div class="ob" style="--ink:#14171F; --ink2:#454C5E; --ink3:#5B6376; --line:#E1E4EA; --line2:#C5CBD6; --bg:#F4F5F7; --acc:{{accent}}; --tint:#E9ECF7; --danger:#B3261E; position:relative; height:100vh; display:flex; flex-direction:column; overflow:hidden; background:var(--bg); color:var(--ink); font-family:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif; font-size:15px; line-height:1.4">
+
+  <header style="flex:none; height:60px; background:#fff; border-bottom:1px solid var(--line); display:flex; align-items:center">
+    <div class="ob-bar" style="width:100%; max-width:1344px; margin:0 auto; padding:0 32px; display:flex; align-items:center; gap:10px">
+      <span aria-hidden="true" style="width:28px; height:28px; border-radius:8px; background:var(--acc); display:inline-flex; align-items:center; justify-content:center"><span style="width:12px; height:12px; border-radius:50%; border:2.5px solid #fff"></span></span>
+      <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif; font-weight:700; font-size:20px; letter-spacing:-0.01em">Optimist</span>
+    </div>
+  </header>
+
+  <main class="ob-main" style="flex:1; min-height:0; display:flex; flex-direction:column; overflow:hidden">
+    <div class="ob-inner" style="width:100%; max-width:1344px; margin:0 auto; padding:28px 32px 0; flex:1; min-height:0; display:flex; flex-direction:column">
+
+      <div style="flex:none; display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:20px">
+        <div>
+          <h1 style="margin:0; font-family:'Bricolage Grotesque',system-ui,sans-serif; font-weight:600; font-size:34px; line-height:1.1; letter-spacing:-0.02em">Polaznici</h1>
+          <p style="margin:6px 0 0; color:var(--ink2)">{{summary}}</p>
+        </div>
+        <button onClick="{{openNew}}" style-hover="filter:brightness(1.15)" style="display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 18px; border:0; border-radius:10px; background:var(--acc); color:#fff; font-size:15px; font-weight:600; cursor:pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          Novi polaznik
+        </button>
+      </div>
+
+      <div role="group" aria-label="Uzrasna kategorija" style="flex:none; display:flex; gap:8px; overflow-x:auto; padding:2px 2px 8px; margin:0 -2px">
+        <sc-for list="{{cats}}" as="c" hint-placeholder-count="6">
+          <button onClick="{{c.pick}}" aria-pressed="{{c.on}}" style="flex:none; display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 14px; border-radius:999px; font-size:14px; font-weight:600; cursor:pointer; background:{{c.bg}}; color:{{c.fg}}; border:1px solid {{c.bd}}">
+            <span>{{c.label}}</span>
+            <span style="font-size:13px; opacity:0.8">{{c.n}}</span>
+          </button>
+        </sc-for>
+      </div>
+
+      <div style="flex:none; display:flex; flex-wrap:wrap; align-items:center; gap:12px; padding:12px 0 16px">
+        <label class="ob-sel" style="position:relative; flex:1 1 240px; max-width:300px; display:block">
+          <span class="ob-sr">Pretraži polaznike</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B6376" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position:absolute; left:14px; top:13px"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+          <input type="search" value="{{q}}" onChange="{{onQ}}" placeholder="Ime, roditelj, OIB…" style="width:100%; height:44px; padding:0 14px 0 42px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px"/>
+        </label>
+        <select class="ob-sel" value="{{fLok}}" onChange="{{onLok}}" aria-label="Lokacija" style="flex:1 1 150px; max-width:190px; height:44px; padding:0 10px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px">
+          <sc-for list="{{lokOpts}}" as="o" hint-placeholder-count="4"><option value="{{o.v}}" label="{{o.l}}"></option></sc-for>
+        </select>
+        <select class="ob-sel" value="{{fGrupa}}" onChange="{{onGrupa}}" aria-label="Grupa" style="flex:1 1 150px; max-width:190px; height:44px; padding:0 10px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px">
+          <sc-for list="{{grupaOpts}}" as="o" hint-placeholder-count="6"><option value="{{o.v}}" label="{{o.l}}"></option></sc-for>
+        </select>
+        <select class="ob-sel" value="{{fPojas}}" onChange="{{onPojas}}" aria-label="Pojas" style="flex:1 1 150px; max-width:190px; height:44px; padding:0 10px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px">
+          <sc-for list="{{pojasOpts}}" as="o" hint-placeholder-count="10"><option value="{{o.v}}" label="{{o.l}}"></option></sc-for>
+        </select>
+        <button onClick="{{toggleLijec}}" aria-pressed="{{lijecOn}}" style="display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 14px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; background:{{lijecBg}}; color:{{lijecFg}}; border:1px solid {{lijecBd}}">
+          <span aria-hidden="true" style="width:8px; height:8px; border-radius:50%; background:#C23B30"></span>
+          <span>Liječnički istekao</span>
+          <span style="font-size:13px; opacity:0.8">{{lijecN}}</span>
+        </button>
+        <button onClick="{{toggleUpis}}" aria-pressed="{{upisOn}}" style="display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 14px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; background:{{upisBg}}; color:{{upisFg}}; border:1px solid {{upisBd}}">
+          <span aria-hidden="true" style="width:8px; height:8px; border-radius:50%; background:#D9930D"></span>
+          <span>Treba upisati</span>
+          <span style="font-size:13px; opacity:0.8">{{upisN}}</span>
+        </button>
+        <sc-if value="{{hasFilters}}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{clearFilters}}" style-hover="text-decoration:underline" style="height:44px; padding:0 8px; border:0; background:none; color:var(--acc); font-size:14px; font-weight:600; cursor:pointer">Poništi filtre</button>
+        </sc-if>
+      </div>
+
+      <div class="ob-tbl" style="flex:1; min-height:0; overflow:auto; background:#fff; border:1px solid var(--line); border-radius:12px; margin-bottom:24px">
+        <table style="width:100%; min-width:1100px; table-layout:fixed; border-collapse:separate; border-spacing:0; font-size:14px">
+          <thead>
+            <tr>
+              <th scope="col" style="width:250px; position:sticky; top:0; z-index:2; background:#fff; text-align:left; padding:12px 16px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink3); border-bottom:1px solid var(--line)">Polaznik</th>
+              <th scope="col" style="width:210px; position:sticky; top:0; z-index:2; background:#fff; text-align:left; padding:12px 16px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink3); border-bottom:1px solid var(--line)">Pojas</th>
+              <th scope="col" style="width:180px; position:sticky; top:0; z-index:2; background:#fff; text-align:left; padding:12px 16px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink3); border-bottom:1px solid var(--line)">Grupa</th>
+              <th scope="col" style="width:190px; position:sticky; top:0; z-index:2; background:#fff; text-align:left; padding:12px 16px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink3); border-bottom:1px solid var(--line)">Uzrast</th>
+              <th scope="col" style="width:150px; position:sticky; top:0; z-index:2; background:#fff; text-align:left; padding:12px 16px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink3); border-bottom:1px solid var(--line)">Liječnički</th>
+              <th scope="col" style="width:200px; position:sticky; top:0; z-index:2; background:#fff; text-align:left; padding:12px 16px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink3); border-bottom:1px solid var(--line)">Roditelj / kontakt</th>
+              <th scope="col" style="width:104px; position:sticky; top:0; z-index:2; background:#fff; padding:12px 16px; border-bottom:1px solid var(--line)"><span class="ob-sr">Radnje</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+              <tr onClick="{{r.edit}}" style-hover="background:#F7F8FB" style="cursor:pointer">
+                <td style="padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:middle">
+                  <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px">
+                    <button onClick="{{r.edit}}" style-hover="color:var(--acc)" style="background:none; border:0; padding:0; margin:0; font-family:inherit; font-size:15px; font-weight:600; color:var(--ink); text-align:left; cursor:pointer">{{r.name}}</button>
+                    <sc-if value="{{r.t}}" hint-placeholder-val="{{ false }}"><span title="Oznaka „t“ iz tablice" style="padding:1px 7px; border-radius:6px; background:#EEF0F4; color:var(--ink2); font-size:12px; font-weight:600">t</span></sc-if>
+                  </div>
+                  <div style="margin-top:2px; font-size:13px; color:var(--ink3)">{{r.lokLabel}}</div>
+                </td>
+                <td style="padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:middle">
+                  <div style="display:flex; align-items:center; gap:10px">
+                    <span aria-hidden="true" style="flex:none; width:30px; height:10px; border-radius:3px; background:{{r.beltBg}}; border:{{r.beltBd}}"></span>
+                    <span style="color:{{r.beltFg}}">{{r.beltLabel}}</span>
+                  </div>
+                  <sc-if value="{{r.hasUpis}}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:6px"><span style="display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px; font-weight:600; background:{{r.upisBg}}; color:{{r.upisFg}}">{{r.upisText}}</span></div>
+                  </sc-if>
+                </td>
+                <td style="padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:middle; color:{{r.grupaFg}}">{{r.grupaLabel}}</td>
+                <td style="padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:middle">
+                  <div style="font-weight:500">{{r.uzLabel}}</div>
+                  <div style="margin-top:2px; font-size:13px; color:var(--ink3)">{{r.dobText}}</div>
+                </td>
+                <td style="padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:middle">
+                  <span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:12.5px; font-weight:600; background:{{r.lijecBg}}; color:{{r.lijecFg}}">
+                    <span aria-hidden="true" style="width:6px; height:6px; border-radius:50%; background:currentColor"></span>{{r.lijecLabel}}
+                  </span>
+                  <div style="margin-top:3px; font-size:13px; color:var(--ink3)">{{r.lijecDate}}</div>
+                </td>
+                <td style="padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:middle">
+                  <div style="color:{{r.kontFg}}">{{r.kont1}}</div>
+                  <div style="margin-top:2px; font-size:13px; color:var(--ink3)">{{r.kont2}}</div>
+                </td>
+                <td style="padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:middle">
+                  <div style="display:flex; justify-content:flex-end; gap:2px">
+                    <button onClick="{{r.edit}}" aria-label="Uredi: {{r.name}}" style-hover="background:#E9ECF7" style="width:44px; height:44px; border:0; border-radius:10px; background:none; color:var(--ink2); display:inline-flex; align-items:center; justify-content:center; cursor:pointer">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>
+                    </button>
+                    <button onClick="{{r.del}}" aria-label="Obriši: {{r.name}}" style-hover="background:#FBE9E7" style="width:44px; height:44px; border:0; border-radius:10px; background:none; color:var(--danger); display:inline-flex; align-items:center; justify-content:center; cursor:pointer">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+        <sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+          <div style="padding:56px 24px; text-align:center">
+            <div style="font-family:'Bricolage Grotesque',system-ui,sans-serif; font-weight:600; font-size:20px">Nema polaznika za zadane filtre</div>
+            <p style="margin:8px 0 16px; color:var(--ink2)">Pokušaj s drugim pojmom ili makni neki filter.</p>
+            <button onClick="{{clearFilters}}" style="height:44px; padding:0 18px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:600; cursor:pointer">Poništi filtre</button>
+          </div>
+        </sc-if>
+      </div>
+
+      <div class="ob-cards" style="flex-direction:column; gap:10px; padding-bottom:24px">
+        <sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+          <article style="background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 8px 14px 16px; display:flex; flex-direction:column; gap:10px">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px">
+              <div style="min-width:0; padding-top:6px">
+                <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px">
+                  <button onClick="{{r.edit}}" style="background:none; border:0; padding:0; margin:0; font-family:inherit; font-size:16px; font-weight:600; color:var(--ink); text-align:left; cursor:pointer">{{r.name}}</button>
+                  <sc-if value="{{r.t}}" hint-placeholder-val="{{ false }}"><span title="Oznaka „t“ iz tablice" style="padding:1px 7px; border-radius:6px; background:#EEF0F4; color:var(--ink2); font-size:12px; font-weight:600">t</span></sc-if>
+                </div>
+                <div style="margin-top:2px; font-size:13px; color:var(--ink3)">{{r.lokLabel}}</div>
+              </div>
+              <div style="flex:none; display:flex; gap:0">
+                <button onClick="{{r.edit}}" aria-label="Uredi: {{r.name}}" style="width:44px; height:44px; border:0; border-radius:10px; background:none; color:var(--ink2); display:inline-flex; align-items:center; justify-content:center; cursor:pointer">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>
+                </button>
+                <button onClick="{{r.del}}" aria-label="Obriši: {{r.name}}" style="width:44px; height:44px; border:0; border-radius:10px; background:none; color:var(--danger); display:inline-flex; align-items:center; justify-content:center; cursor:pointer">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg>
+                </button>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px 12px; padding-right:8px">
+              <span style="display:inline-flex; align-items:center; gap:10px">
+                <span aria-hidden="true" style="flex:none; width:30px; height:10px; border-radius:3px; background:{{r.beltBg}}; border:{{r.beltBd}}"></span>
+                <span style="color:{{r.beltFg}}">{{r.beltLabel}}</span>
+              </span>
+              <sc-if value="{{r.hasUpis}}" hint-placeholder-val="{{ false }}"><span style="padding:2px 8px; border-radius:6px; font-size:12px; font-weight:600; background:{{r.upisBg}}; color:{{r.upisFg}}">{{r.upisText}}</span></sc-if>
+            </div>
+            <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px 12px; padding-right:8px">
+              <span style="font-size:14px">{{r.uzLabel}}</span>
+              <span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:12.5px; font-weight:600; background:{{r.lijecBg}}; color:{{r.lijecFg}}">
+                <span aria-hidden="true" style="width:6px; height:6px; border-radius:50%; background:currentColor"></span>Liječnički: {{r.lijecLabel}}
+              </span>
+            </div>
+          </article>
+        </sc-for>
+        <sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+          <div style="padding:40px 16px; text-align:center; background:#fff; border:1px solid var(--line); border-radius:12px">
+            <div style="font-family:'Bricolage Grotesque',system-ui,sans-serif; font-weight:600; font-size:20px">Nema polaznika za zadane filtre</div>
+            <button onClick="{{clearFilters}}" style="margin-top:16px; height:44px; padding:0 18px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:600; cursor:pointer">Poništi filtre</button>
+          </div>
+        </sc-if>
+      </div>
+
+    </div>
+  </main>
+
+  <sc-if value="{{formOpen}}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute; inset:0; z-index:20; display:flex; justify-content:flex-end; background:rgba(20,23,31,0.45)">
+      <button onClick="{{closeForm}}" aria-label="Zatvori formu" tabindex="-1" style="position:absolute; inset:0; width:100%; height:100%; border:0; padding:0; background:transparent; cursor:default"></button>
+      <div role="dialog" aria-modal="true" aria-labelledby="ob-form-title" onKeyDown="{{drawerKey}}" style="position:relative; width:min(680px,100%); height:100%; background:#fff; display:flex; flex-direction:column; box-shadow:-16px 0 48px rgba(20,23,31,0.2)">
+
+        <div style="flex:none; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:20px 28px 16px; border-bottom:1px solid var(--line)">
+          <h2 id="ob-form-title" style="margin:0; font-family:'Bricolage Grotesque',system-ui,sans-serif; font-weight:600; font-size:24px; letter-spacing:-0.01em">{{formTitle}}</h2>
+          <button onClick="{{closeForm}}" aria-label="Zatvori" style-hover="background:#EEF0F4" style="width:44px; height:44px; border:0; border-radius:10px; background:none; color:var(--ink2); display:inline-flex; align-items:center; justify-content:center; cursor:pointer">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+
+        <div style="flex:1; min-height:0; overflow-y:auto; padding:4px 28px 24px">
+
+          <section style="padding:20px 0 22px">
+            <h3 style="margin:0 0 14px; font-family:'Bricolage Grotesque',system-ui,sans-serif; font-weight:600; font-size:16px">Osobni podaci</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); gap:16px">
+              <label style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink2)">
+                <span>Prezime *</span>
+                <input value="{{form.prezime}}" onChange="{{onPrezime}}" autocomplete="off" style="width:100%; height:44px; padding:0 12px; border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:400; border:1px solid {{bd.prezime}}"/>
+                <sc-if value="{{err.prezime}}" hint-placeholder-val="{{ false }}"><span style="font-weight:500; color:var(--danger)">Obavezno polje</span></sc-if>
+              </label>
+              <label style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink2)">
+                <span>Ime *</span>
+                <input value="{{form.ime}}" onChange="{{onIme}}" autocomplete="off" style="width:100%; height:44px; padding:0 12px; border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:400; border:1px solid {{bd.ime}}"/>
+                <sc-if value="{{err.ime}}" hint-placeholder-val="{{ false }}"><span style="font-weight:500; color:var(--danger)">Obavezno polje</span></sc-if>
+              </label>
+              <label style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink2)">
+                <span>Datum rođenja</span>
+                <input type="date" value="{{form.dob}}" onChange="{{onDob}}" style="width:100%; height:44px; padding:0 12px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:400"/>
+              </label>
+              <label style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink2)">
+                <span>OIB</span>
+                <input value="{{form.oib}}" onChange="{{onOib}}" inputmode="numeric" autocomplete="off" placeholder="11 znamenki" style="width:100%; height:44px; padding:0 12px; border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:400; border:1px solid {{bd.oib}}"/>
+                <sc-if value="{{err.oib}}" hint-placeholder-val="{{ false }}"><span style="font-weight:500; color:var(--danger)">OIB mora imati 11 znamenki</span></sc-if>
+              </label>
+              <div style="grid-column:1 / -1; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); gap:10px 16px; padding:14px 16px; background:var(--bg); border-radius:10px">
+                <div>
+                  <div style="font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink3)">Uzrastna kategorija</div>
+                  <div style="margin-top:4px; font-weight:600">{{calc.label}}</div>
+                </div>
+                <div>
+                  <div style="font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink3)">Prelazi u višu kategoriju</div>
+                  <div style="margin-top:4px; font-weight:600">{{calc.next}}</div>
+                </div>
+                <div style="grid-column:1 / -1; font-size:13px; color:var(--ink3)">Računa se automatski iz datuma rođenja (WKF/HKS), ne unosi se ručno.</div>
+              </div>
+            </div>
+          </section>
+
+          <section style="padding:22px 0; border-top:1px solid var(--line)">
+            <h3 style="margin:0 0 14px; font-family:'Bricolage Grotesque',system-ui,sans-serif; font-weight:600; font-size:16px">Karate</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); gap:16px">
+              <label style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink2)">
+                <span>Pojas</span>
+                <span style="display:flex; align-items:center; gap:10px">
+                  <span aria-hidden="true" style="flex:none; width:30px; height:10px; border-radius:3px; background:{{belt.bg}}; border:{{belt.bd}}"></span>
+                  <select value="{{form.kyu}}" onChange="{{onKyu}}" style="flex:1; min-width:0; height:44px; padding:0 10px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:400">
+                    <sc-for list="{{kyuOpts}}" as="o" hint-placeholder-count="11"><option value="{{o.v}}" label="{{o.l}}"></option></sc-for>
+                  </select>
+                </span>
+              </label>
+              <label style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink2)">
+                <span>Grupa</span>
+                <select value="{{form.grupa}}" onChange="{{onGrupa2}}" style="width:100%; height:44px; padding:0 10px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:400">
+                  <sc-for list="{{grupaFormOpts}}" as="o" hint-placeholder-count="6"><option value="{{o.v}}" label="{{o.l}}"></option></sc-for>
+                </select>
+              </label>
+              <label style="grid-column:1 / -1; display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink2)">
+                <span>Lokacija / termin</span>
+                <select value="{{form.lok}}" onChange="{{onLok2}}" style="width:100%; height:44px; padding:0 10px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:400">
+                  <sc-for list="{{lokFormOpts}}" as="o" hint-placeholder-count="4"><option value="{{o.v}}" label="{{o.l}}"></option></sc-for>
+                </select>
+              </label>
+              <div style="grid-column:1 / -1; display:flex; flex-direction:column; gap:6px">
+                <span id="ob-upis-label" style="font-size:13px; font-weight:600; color:var(--ink2)">Upis sljedećeg stupnja</span>
+                <div style="display:flex; flex-wrap:wrap; align-items:center; gap:12px">
+                  <div role="group" aria-labelledby="ob-upis-label" style="flex:0 1 400px; min-width:0; display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:1px; background:var(--line2); border:1px solid var(--line2); border-radius:10px; overflow:hidden">
+                    <sc-for list="{{upisSeg}}" as="u" hint-placeholder-count="3">
+                      <button onClick="{{u.pick}}" aria-pressed="{{u.on}}" style="min-height:44px; padding:4px 8px; border:0; font-size:14px; font-weight:600; line-height:1.2; cursor:pointer; background:{{u.bg}}; color:{{u.fg}}">{{u.label}}</button>
+                    </sc-for>
+                  </div>
+                  <sc-if value="{{showUpisKyu}}" hint-placeholder-val="{{ false }}">
+                    <label style="display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--ink2)">
+                      <span>Upisan na</span>
+                      <select value="{{form.upis}}" onChange="{{onUpisKyu}}" style="height:44px; padding:0 10px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:400">
+                        <sc-for list="{{upisKyuOpts}}" as="o" hint-placeholder-count="9"><option value="{{o.v}}" label="{{o.l}}"></option></sc-for>
+                      </select>
+                    </label>
+                  </sc-if>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style="padding:22px 0; border-top:1px solid var(--line)">
+            <h3 style="margin:0 0 14px; font-family:'Bricolage Grotesque',system-ui,sans-serif; font-weight:600; font-size:16px">Liječnički pregled</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); gap:16px; align-items:end">
+              <label style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink2)">
+                <span>Vrijedi do</span>
+                <input type="date" value="{{lijecDateVal}}" onChange="{{onLijecDate}}" disabled="{{form.nema}}" style="width:100%; height:44px; padding:0 12px; border:1px solid var(--line2); border-radius:10px; background:{{lijecInputBg}}; color:var(--ink); font-size:15px; font-weight:400"/>
+              </label>
+              <div style="display:flex; align-items:center; min-height:44px">
+                <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:999px; font-size:13px; font-weight:600; background:{{lijecPill.bg}}; color:{{lijecPill.fg}}">
+                  <span aria-hidden="true" style="width:6px; height:6px; border-radius:50%; background:currentColor"></span>{{lijecPill.label}}
+                </span>
+              </div>
+              <label style="grid-column:1 / -1; display:flex; align-items:center; gap:10px; min-height:44px; font-size:15px; font-weight:500; color:var(--ink); cursor:pointer">
+                <input type="checkbox" checked="{{form.nema}}" onChange="{{onNema}}" style="width:20px; height:20px; margin:0; accent-color:var(--acc)"/>
+                <span>Nema liječnički pregled</span>
+              </label>
+            </div>
+          </section>
+
+          <section style="padding:22px 0; border-top:1px solid var(--line)">
+            <h3 style="margin:0 0 14px; font-family:'Bricolage Grotesque',system-ui,sans-serif; font-weight:600; font-size:16px">Roditelj / kontakt</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); gap:16px">
+              <label style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink2)">
+                <span>Roditelj / skrbnik</span>
+                <input value="{{form.rod}}" onChange="{{onRod}}" autocomplete="off" style="width:100%; height:44px; padding:0 12px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:400"/>
+              </label>
+              <label style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink2)">
+                <span>Mobitel</span>
+                <input type="tel" value="{{form.mob}}" onChange="{{onMob}}" autocomplete="off" placeholder="091 234 5678" style="width:100%; height:44px; padding:0 12px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:400"/>
+              </label>
+              <label style="grid-column:1 / -1; display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink2)">
+                <span>E-mail</span>
+                <input type="email" value="{{form.mail}}" onChange="{{onMail}}" autocomplete="off" style="width:100%; height:44px; padding:0 12px; border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:400; border:1px solid {{bd.mail}}"/>
+                <sc-if value="{{err.mail}}" hint-placeholder-val="{{ false }}"><span style="font-weight:500; color:var(--danger)">Provjeri e-mail adresu</span></sc-if>
+              </label>
+            </div>
+          </section>
+
+          <section style="padding:22px 0 8px; border-top:1px solid var(--line)">
+            <h3 style="margin:0 0 14px; font-family:'Bricolage Grotesque',system-ui,sans-serif; font-weight:600; font-size:16px">Ostalo</h3>
+            <div style="display:flex; flex-direction:column; gap:12px">
+              <label style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink2)">
+                <span>Napomena</span>
+                <textarea rows="3" value="{{form.nap}}" onChange="{{onNap}}" style="width:100%; padding:10px 12px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:400; line-height:1.4; resize:vertical"></textarea>
+              </label>
+              <label style="display:flex; align-items:center; gap:10px; min-height:44px; font-size:15px; font-weight:500; color:var(--ink); cursor:pointer">
+                <input type="checkbox" checked="{{form.t}}" onChange="{{onT}}" style="width:20px; height:20px; margin:0; accent-color:var(--acc)"/>
+                <span>Oznaka „t“</span>
+              </label>
+            </div>
+          </section>
+        </div>
+
+        <div style="flex:none; display:flex; flex-wrap:wrap; align-items:center; gap:12px; padding:16px 28px; border-top:1px solid var(--line); background:#fff">
+          <sc-if value="{{isEdit}}" hint-placeholder-val="{{ false }}">
+            <button class="ob-fdel" onClick="{{askDeleteFromForm}}" style-hover="background:#FBE9E7" style="display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 16px; border:1px solid #E5B3AE; border-radius:10px; background:#fff; color:var(--danger); font-size:15px; font-weight:600; cursor:pointer">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg>
+              Obriši polaznika
+            </button>
+          </sc-if>
+          <sc-if value="{{showFormError}}" hint-placeholder-val="{{ false }}"><span class="ob-ferr" role="alert" style="font-size:13px; font-weight:600; color:var(--danger)">Provjeri označena polja</span></sc-if>
+          <div class="ob-fsp" style="flex:1 1 0"></div>
+          <button class="ob-fbtn" onClick="{{closeForm}}" style-hover="background:#F4F5F7" style="height:44px; padding:0 18px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:600; cursor:pointer">Odustani</button>
+          <button class="ob-fbtn" onClick="{{save}}" style-hover="filter:brightness(1.15)" style="height:44px; padding:0 20px; border:0; border-radius:10px; background:var(--acc); color:#fff; font-size:15px; font-weight:600; cursor:pointer">{{saveLabel}}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{confirmOpen}}" hint-placeholder-val="{{ false }}">
+    <div onKeyDown="{{dialogKey}}" style="position:absolute; inset:0; z-index:40; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(20,23,31,0.55)">
+      <div role="alertdialog" aria-modal="true" aria-labelledby="ob-del-title" aria-describedby="ob-del-desc" style="width:min(440px,100%); background:#fff; border-radius:16px; padding:24px; box-shadow:0 24px 64px rgba(20,23,31,0.3)">
+        <span aria-hidden="true" style="width:44px; height:44px; border-radius:50%; background:#FBE9E7; color:var(--danger); display:inline-flex; align-items:center; justify-content:center">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg>
+        </span>
+        <h2 id="ob-del-title" style="margin:16px 0 8px; font-family:'Bricolage Grotesque',system-ui,sans-serif; font-weight:600; font-size:22px; letter-spacing:-0.01em">Obrisati polaznika?</h2>
+        <p id="ob-del-desc" style="margin:0; color:var(--ink2)">Zapis <strong style="color:var(--ink)">{{confirmName}}</strong> bit će uklonjen s popisa. Brisanje možeš poništiti samo odmah nakon toga.</p>
+        <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:12px; margin-top:24px">
+          <button onClick="{{cancelDelete}}" style-hover="background:#F4F5F7" style="height:44px; padding:0 18px; border:1px solid var(--line2); border-radius:10px; background:#fff; color:var(--ink); font-size:15px; font-weight:600; cursor:pointer">Odustani</button>
+          <button onClick="{{doDelete}}" style-hover="filter:brightness(1.12)" style="height:44px; padding:0 18px; border:0; border-radius:10px; background:var(--danger); color:#fff; font-size:15px; font-weight:600; cursor:pointer">Da, obriši</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{toastOpen}}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="position:absolute; left:50%; bottom:24px; transform:translateX(-50%); z-index:50; max-width:calc(100% - 32px); display:flex; align-items:center; gap:8px 16px; padding:6px 8px 6px 18px; border-radius:12px; background:var(--ink); color:#fff; font-size:14px; font-weight:500; box-shadow:0 12px 32px rgba(20,23,31,0.3)">
+      <span style="padding:8px 0">{{toastText}}</span>
+      <sc-if value="{{canUndo}}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{undo}}" style-hover="background:rgba(255,255,255,0.14)" style="height:44px; padding:0 14px; border:0; border-radius:8px; background:none; color:#fff; font-size:14px; font-weight:700; text-decoration:underline; cursor:pointer">Poništi</button>
+      </sc-if>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2D3E7B","options":["#2D3E7B","#1F5C54","#7A2F3B","#14171F"]},"startView":{"editor":null,"default":"list"},"startId":{"editor":null,"default":""},"$preview":{"width":1440,"height":900}}'>
+// Podaci uklonjeni iz ove kopije (OIB, datumi rođenja). Izvor: database/seeders/data/polaznici.json
+// Format retka u prototipu: [prezime, ime, lokacija, grupa, kyu, upis, liječnički, oib, datum_rođenja, roditelj, email, mobitel, napomena, t]
+const RAW = [];
+
+const LOK = { S: 'OŠ Stanovi', C: 'Višnjik · četvrtak', P: 'Višnjik · pon. i sri., 20–21 h' };
+const GRUPE = { p: 'Početna (Odin)', pb: 'Početna + borci (Odin)', k: 'Kate', kb: 'Kate i borci', bs: 'Borci stariji slabije kate' };
+const KYU = [
+  { k: '9', l: '9. kyu · bijeložuti', a: '#FFFFFF', b: '#F2D13B' },
+  { k: '8', l: '8. kyu · žuti', a: '#F2C230' },
+  { k: '7', l: '7. kyu · narančasti', a: '#EE8A2B' },
+  { k: '6', l: '6. kyu · crveni', a: '#D0342C' },
+  { k: '5', l: '5. kyu · zeleni', a: '#3C9A4B' },
+  { k: '4', l: '4. kyu · plavi', a: '#2F6FD0' },
+  { k: '3', l: '3. kyu · ljubičasti', a: '#7A4BB5' },
+  { k: '2', l: '2. kyu · smeđi', a: '#7A4A2B' },
+  { k: '1', l: '1. kyu · smeđe crni', a: '#7A4A2B', b: '#14171F' },
+  { k: '0', l: 'Bez pojasa' }
+];
+const UZ = [
+  { key: 'ispod', label: 'Ispod U8', max: 6, mo: 72 },
+  { key: 'u08', label: 'U08 · Cicibani', max: 8, mo: 96 },
+  { key: 'u10', label: 'U10 · Mlađi učenici', max: 10, mo: 120 },
+  { key: 'u12', label: 'U12 · Učenici', max: 12, mo: 144 },
+  { key: 'u14', label: 'U14 · Mlađi kadeti', max: 14, mo: 168 },
+  { key: 'u16', label: 'U16 · Kadeti', max: 16, mo: 192 },
+  { key: 'u18', label: 'U18 · Juniori', max: 18, mo: 216 },
+  { key: 'u21', label: 'U21', max: 21, mo: 252 },
+  { key: 'sen', label: 'Seniori', max: 999, mo: 0 }
+];
+
+const pad = (n) => (n < 10 ? '0' : '') + n;
+function todayISO() { const d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function parts(s) { const a = s.split('-'); return [+a[0], +a[1], +a[2]]; }
+function fmtDate(s) { if (!s) return ''; const p = parts(s); return pad(p[2]) + '.' + pad(p[1]) + '.' + p[0] + '.'; }
+function ageOn(dob, today) { const d = parts(dob), t = parts(today); let a = t[0] - d[0]; if (t[1] < d[1] || (t[1] === d[1] && t[2] < d[2])) a--; return a; }
+function addMonths(s, n) { const p = parts(s); const idx = p[1] - 1 + n; const y = p[0] + Math.floor(idx / 12); const m = ((idx % 12) + 12) % 12; const dim = new Date(y, m + 1, 0).getDate(); return y + '-' + pad(m + 1) + '-' + pad(Math.min(p[2], dim)); }
+function daysBetween(a, b) { const x = parts(a), y = parts(b); return Math.round((Date.UTC(y[0], y[1] - 1, y[2]) - Date.UTC(x[0], x[1] - 1, x[2])) / 86400000); }
+function uzrastOf(dob, today) {
+  if (!dob) return null;
+  const a = ageOn(dob, today);
+  const u = UZ.find((x) => a < x.max);
+  return { key: u.key, label: u.label, age: a, next: u.mo ? addMonths(dob, u.mo) : '' };
+}
+function lijecOf(v, today) {
+  if (v === 'nema') return { k: 'nema', label: 'Nema', date: '', bg: '#EEF0F4', fg: '#454C5E' };
+  if (!v) return { k: 'nepoznato', label: 'Nepoznato', date: '', bg: '#EEF0F4', fg: '#454C5E' };
+  const d = daysBetween(today, v);
+  if (d < 0) return { k: 'istekao', label: 'Istekao', date: fmtDate(v), bg: '#FBE9E7', fg: '#9F1F17' };
+  if (d <= 30) return { k: 'uskoro', label: 'Ističe uskoro', date: 'do ' + fmtDate(v), bg: '#FFF1CC', fg: '#7A4F00' };
+  return { k: 'vrijedi', label: 'Vrijedi', date: 'do ' + fmtDate(v), bg: '#E3F3E8', fg: '#1B5E32' };
+}
+function beltStyle(k) {
+  const b = KYU.find((x) => x.k === k);
+  if (!b) return { label: 'Nije uneseno', bg: '#FFFFFF', bd: '1px dashed #9AA2B2', fg: '#5B6376' };
+  if (!b.a) return { label: b.l, bg: '#FFFFFF', bd: '1px solid #9AA2B2', fg: '#14171F' };
+  const bg = b.b ? 'linear-gradient(90deg,' + b.a + ' 50%,' + b.b + ' 50%)' : b.a;
+  return { label: b.l, bg: bg, bd: '1px solid rgba(20,23,31,0.3)', fg: '#14171F' };
+}
+function fmtPhone(s) { const d = (s || '').replace(/\D/g, ''); return d.length === 10 ? d.slice(0, 3) + ' ' + d.slice(3, 6) + ' ' + d.slice(6) : (s || ''); }
+function norm(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd'); }
+function blankForm() { return { id: '', prezime: '', ime: '', lok: 'S', grupa: '', kyu: '', upis: '', lijec: '', oib: '', dob: '', rod: '', mail: '', mob: '', nap: '', t: false }; }
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const data = RAW.map((r, i) => ({ id: 's' + (i + 1), prezime: r[0], ime: r[1], lok: r[2], grupa: r[3], kyu: r[4], upis: r[5], lijec: r[6], oib: r[7], dob: r[8], rod: r[9], mail: r[10], mob: r[11], nap: r[12], t: !!r[13] }));
+    this.state = { data: data, nextId: data.length + 1, q: '', uz: 'sve', lok: '', grupa: '', pojas: '', fl: false, fu: false, formOpen: false, form: null, editId: null, submitted: false, confirmId: null, toast: null };
+    const v = props && props.startView, id = props && props.startId;
+    const rec = id ? data.find((x) => x.id === id) : null;
+    if (v === 'edit' && rec) { this.state.formOpen = true; this.state.editId = rec.id; this.state.form = { ...rec }; }
+    if (v === 'new') { this.state.formOpen = true; this.state.form = blankForm(); }
+    if (v === 'delete' && rec) { this.state.confirmId = rec.id; }
+  }
+
+  setForm(patch) { this.setState({ form: { ...(this.state.form || blankForm()), ...patch } }); }
+  openNew() { this.setState({ formOpen: true, editId: null, form: blankForm(), submitted: false }); }
+  openEdit(id) { const r = this.state.data.find((x) => x.id === id); if (!r) return; this.setState({ formOpen: true, editId: id, form: { ...r }, submitted: false }); }
+  closeForm() { this.setState({ formOpen: false, form: null, editId: null, submitted: false }); }
+  validate(f) {
+    const e = {};
+    if (!f.prezime.trim()) e.prezime = true;
+    if (!f.ime.trim()) e.ime = true;
+    if (f.oib.trim() && !/^\d{11}$/.test(f.oib.trim())) e.oib = true;
+    if (f.mail.trim() && !/^\S+@\S+\.\S+$/.test(f.mail.trim())) e.mail = true;
+    return e;
+  }
+  flashToast() { clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: null }), 7000); }
+  save() {
+    const f = this.state.form;
+    if (!f) return;
+    if (Object.keys(this.validate(f)).length) { this.setState({ submitted: true }); return; }
+    const rec = { ...f, prezime: f.prezime.trim(), ime: f.ime.trim(), oib: f.oib.trim(), rod: f.rod.trim(), mail: f.mail.trim(), mob: f.mob.trim(), nap: f.nap.trim() };
+    let data, nextId = this.state.nextId;
+    if (this.state.editId) { data = this.state.data.map((r) => (r.id === this.state.editId ? rec : r)); }
+    else { rec.id = 'n' + nextId; nextId++; data = [...this.state.data, rec]; }
+    this.setState({ data: data, nextId: nextId, formOpen: false, form: null, editId: null, submitted: false, toast: { text: 'Spremljeno: ' + rec.prezime + ' ' + rec.ime, undo: null } });
+    this.flashToast();
+  }
+  doDelete() {
+    const id = this.state.confirmId;
+    const idx = this.state.data.findIndex((r) => r.id === id);
+    if (idx < 0) { this.setState({ confirmId: null }); return; }
+    const rec = this.state.data[idx];
+    this.setState({ data: this.state.data.filter((r) => r.id !== id), confirmId: null, formOpen: false, form: null, editId: null, submitted: false, toast: { text: 'Obrisano: ' + rec.prezime + ' ' + rec.ime, undo: { rec: rec, idx: idx } } });
+    this.flashToast();
+  }
+  undo() {
+    const u = this.state.toast && this.state.toast.undo;
+    if (!u) return;
+    const data = [...this.state.data];
+    data.splice(Math.min(u.idx, data.length), 0, u.rec);
+    this.setState({ data: data, toast: null });
+  }
+
+  derive(r, today) {
+    const bs = beltStyle(r.kyu);
+    const uz = uzrastOf(r.dob, today);
+    const lj = lijecOf(r.lijec, today);
+    const warn = r.upis === 't';
+    const upisTxt = warn ? 'Treba upisati' : (/^\d$/.test(r.upis) ? 'Upisan: ' + r.upis + '. kyu' : '');
+    const mob = fmtPhone(r.mob);
+    return {
+      id: r.id, name: r.prezime + ' ' + r.ime, t: r.t, lok: r.lok, grupa: r.grupa, kyu: r.kyu, upis: r.upis,
+      lokLabel: LOK[r.lok] || '—',
+      grupaLabel: GRUPE[r.grupa] || '—', grupaFg: GRUPE[r.grupa] ? '#14171F' : '#5B6376',
+      beltLabel: bs.label, beltBg: bs.bg, beltBd: bs.bd, beltFg: bs.fg,
+      hasUpis: !!upisTxt, upisText: upisTxt, upisBg: warn ? '#FFF1CC' : 'var(--tint)', upisFg: warn ? '#7A4F00' : 'var(--acc)',
+      uzKey: uz ? uz.key : 'nd', uzLabel: uz ? uz.label : '—',
+      dobText: uz ? fmtDate(r.dob) + ' · ' + uz.age + ' g.' : 'Nema datuma rođenja',
+      lijecKey: lj.k, lijecLabel: lj.label, lijecDate: lj.date, lijecBg: lj.bg, lijecFg: lj.fg,
+      kont1: r.rod || mob || '—', kont2: r.rod ? mob : '', kontFg: (r.rod || mob) ? '#14171F' : '#5B6376',
+      hay: norm([r.prezime, r.ime, r.rod, r.mail, r.mob, r.oib].join(' '))
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const today = todayISO();
+    const accent = (this.props && this.props.accent) || '#2D3E7B';
+    const all = s.data.map((r) => this.derive(r, today));
+    const qn = norm(s.q.trim());
+    const match = (r, skip) => {
+      if (skip !== 'uz' && s.uz !== 'sve' && r.uzKey !== s.uz) return false;
+      if (s.lok && r.lok !== s.lok) return false;
+      if (s.grupa && r.grupa !== s.grupa) return false;
+      if (s.pojas && r.kyu !== s.pojas) return false;
+      if (s.fl && r.lijecKey !== 'istekao') return false;
+      if (s.fu && r.upis !== 't') return false;
+      if (qn && r.hay.indexOf(qn) < 0) return false;
+      return true;
+    };
+    const base = all.filter((r) => match(r, 'uz'));
+    const shown = all.filter((r) => match(r, ''));
+    shown.sort((a, b) => a.name.localeCompare(b.name, 'hr'));
+    const rows = shown.map((r) => ({
+      ...r,
+      edit: () => this.openEdit(r.id),
+      del: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ confirmId: r.id }); }
+    }));
+
+    const present = {};
+    all.forEach((r) => { present[r.uzKey] = true; });
+    const catDefs = [{ key: 'sve', label: 'Svi' }].concat(UZ.filter((u) => present[u.key]).map((u) => ({ key: u.key, label: u.label }))).concat(present.nd ? [{ key: 'nd', label: 'Bez datuma rođenja' }] : []);
+    const cats = catDefs.map((c) => {
+      const on = s.uz === c.key;
+      return {
+        label: c.label, on: on,
+        n: c.key === 'sve' ? base.length : base.filter((r) => r.uzKey === c.key).length,
+        bg: on ? 'var(--acc)' : '#FFFFFF', fg: on ? '#FFFFFF' : '#14171F', bd: on ? 'var(--acc)' : '#C5CBD6',
+        pick: () => this.setState({ uz: c.key })
+      };
+    });
+
+    const lijecN = all.filter((r) => r.lijecKey === 'istekao').length;
+    const upisN = all.filter((r) => r.upis === 't').length;
+    const hasFilters = !!(s.q || s.uz !== 'sve' || s.lok || s.grupa || s.pojas || s.fl || s.fu);
+
+    const f = s.form || blankForm();
+    const err = this.validate(f);
+    const shownErr = s.submitted ? err : {};
+    const bd = { prezime: shownErr.prezime ? '#B3261E' : '#C5CBD6', ime: shownErr.ime ? '#B3261E' : '#C5CBD6', oib: shownErr.oib ? '#B3261E' : '#C5CBD6', mail: shownErr.mail ? '#B3261E' : '#C5CBD6' };
+    const uz = uzrastOf(f.dob, today);
+    const calc = uz ? { label: uz.label, next: uz.next ? fmtDate(uz.next) : '—' } : { label: '—', next: '—' };
+    const lj = lijecOf(f.lijec, today);
+    const nema = f.lijec === 'nema';
+    const isDigit = /^\d$/.test(f.upis);
+    const segBtn = (label, on, pick) => ({ label: label, on: on, pick: pick, bg: on ? 'var(--acc)' : '#FFFFFF', fg: on ? '#FFFFFF' : '#14171F' });
+    const upisSeg = [
+      segBtn('Nije potrebno', f.upis === '', () => this.setForm({ upis: '' })),
+      segBtn('Treba upisati', f.upis === 't', () => this.setForm({ upis: 't' })),
+      segBtn('Već upisan', isDigit, () => { const k = f.kyu; const d = /^[1-9]$/.test(k) ? String(Math.max(1, Number(k) - 1)) : '9'; this.setForm({ upis: isDigit ? f.upis : d }); })
+    ];
+    const inp = (k) => (e) => this.setForm({ [k]: e.target.value });
+    const confirmRec = s.confirmId ? s.data.find((r) => r.id === s.confirmId) : null;
+
+    return {
+      accent: accent,
+      summary: hasFilters ? 'Prikazano ' + shown.length + ' od ' + all.length : all.length + ' upisanih polaznika',
+      q: s.q, onQ: (e) => this.setState({ q: e.target.value }),
+      fLok: s.lok, fGrupa: s.grupa, fPojas: s.pojas,
+      onLok: (e) => this.setState({ lok: e.target.value }),
+      onGrupa: (e) => this.setState({ grupa: e.target.value }),
+      onPojas: (e) => this.setState({ pojas: e.target.value }),
+      lokOpts: [{ v: '', l: 'Sve lokacije' }].concat(Object.keys(LOK).map((k) => ({ v: k, l: LOK[k] }))),
+      grupaOpts: [{ v: '', l: 'Sve grupe' }].concat(Object.keys(GRUPE).map((k) => ({ v: k, l: GRUPE[k] }))),
+      pojasOpts: [{ v: '', l: 'Svi pojasevi' }].concat(KYU.map((k) => ({ v: k.k, l: k.l }))),
+      cats: cats,
+      lijecOn: s.fl, lijecN: lijecN, lijecBg: s.fl ? 'var(--acc)' : '#FFFFFF', lijecFg: s.fl ? '#FFFFFF' : '#14171F', lijecBd: s.fl ? 'var(--acc)' : '#C5CBD6',
+      toggleLijec: () => this.setState({ fl: !s.fl }),
+      upisOn: s.fu, upisN: upisN, upisBg: s.fu ? 'var(--acc)' : '#FFFFFF', upisFg: s.fu ? '#FFFFFF' : '#14171F', upisBd: s.fu ? 'var(--acc)' : '#C5CBD6',
+      toggleUpis: () => this.setState({ fu: !s.fu }),
+      hasFilters: hasFilters,
+      clearFilters: () => this.setState({ q: '', uz: 'sve', lok: '', grupa: '', pojas: '', fl: false, fu: false }),
+      rows: rows, empty: rows.length === 0,
+      openNew: () => this.openNew(),
+
+      formOpen: s.formOpen, form: f, err: shownErr, bd: bd, calc: calc,
+      formTitle: s.editId ? 'Uredi polaznika' : 'Novi polaznik',
+      saveLabel: s.editId ? 'Spremi promjene' : 'Dodaj polaznika',
+      isEdit: !!s.editId,
+      showFormError: s.submitted && Object.keys(err).length > 0,
+      belt: beltStyle(f.kyu),
+      kyuOpts: [{ v: '', l: '— nije uneseno' }].concat(KYU.map((k) => ({ v: k.k, l: k.l }))),
+      grupaFormOpts: [{ v: '', l: '— bez grupe' }].concat(Object.keys(GRUPE).map((k) => ({ v: k, l: GRUPE[k] }))),
+      lokFormOpts: [{ v: '', l: '— nije odabrano' }].concat(Object.keys(LOK).map((k) => ({ v: k, l: LOK[k] }))),
+      upisKyuOpts: KYU.filter((k) => k.k !== '0').map((k) => ({ v: k.k, l: k.k + '. kyu' })),
+      upisSeg: upisSeg, showUpisKyu: isDigit,
+      lijecDateVal: nema ? '' : f.lijec, lijecInputBg: nema ? '#F4F5F7' : '#FFFFFF',
+      lijecPill: { label: lj.label, bg: lj.bg, fg: lj.fg },
+      onPrezime: inp('prezime'), onIme: inp('ime'), onDob: inp('dob'), onOib: inp('oib'),
+      onKyu: inp('kyu'), onGrupa2: inp('grupa'), onLok2: inp('lok'), onUpisKyu: inp('upis'),
+      onLijecDate: inp('lijec'),
+      onNema: (e) => this.setForm({ lijec: e.target.checked ? 'nema' : '' }),
+      onRod: inp('rod'), onMob: inp('mob'), onMail: inp('mail'), onNap: inp('nap'),
+      onT: (e) => this.setForm({ t: e.target.checked }),
+      closeForm: () => this.closeForm(),
+      save: () => this.save(),
+      askDeleteFromForm: () => this.setState({ confirmId: s.editId }),
+      drawerKey: (e) => { if (e.key === 'Escape') this.closeForm(); },
+
+      confirmOpen: !!confirmRec, confirmName: confirmRec ? confirmRec.prezime + ' ' + confirmRec.ime : '',
+      doDelete: () => this.doDelete(),
+      cancelDelete: () => this.setState({ confirmId: null }),
+      dialogKey: (e) => { if (e.key === 'Escape') this.setState({ confirmId: null }); },
+
+      toastOpen: !!s.toast, toastText: s.toast ? s.toast.text : '', canUndo: !!(s.toast && s.toast.undo),
+      undo: () => this.undo()
+    };
+  }
+}
+</script>
+</body>
+</html>

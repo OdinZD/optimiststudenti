@@ -1,0 +1,75 @@
+/*
+ * Optimist – dizajn tokeni (iz odobrenog dizajna, 7.10.2026.)
+ * Fontovi: Bricolage Grotesque (naslovi) + Hanken Grotesk (tekst), OFL.
+ * Self-hostani lokalno preko Vite fonts plugina (bez poziva na Google servere u runtimeu).
+ */
+:root {
+  /* Tekst */
+  --ink: #14171F;          /* primarni tekst */
+  --ink2: #454C5E;         /* labele, sekundarni tekst */
+  --ink3: #5B6376;         /* pomoćni tekst, zaglavlja tablice, prazne vrijednosti */
+
+  /* Površine i linije */
+  --bg: #F4F5F7;           /* podloga stranice, info-okvir u formi */
+  --surface: #FFFFFF;      /* kartice, tablica, drawer, inputi */
+  --line: #E1E4EA;         /* razdjelnici, rub tablice */
+  --line2: #C5CBD6;        /* rub inputa, chipova i sekundarnih gumba */
+  --row-hover: #F7F8FB;
+  --neutral-pill: #EEF0F4;
+
+  /* Akcent (indigo) – primarni gumbi, aktivni chipovi, fokus */
+  --acc: #2D3E7B;
+  --tint: #E9ECF7;         /* pozadina oznake „Upisan: N. kyu", hover ikonice Uredi */
+
+  /* Opasnost */
+  --danger: #B3261E;
+  --danger-border: #E5B3AE;
+  --danger-tint: #FBE9E7;
+
+  /* Statusi (pozadina / tekst) */
+  --st-expired-bg: #FBE9E7;  --st-expired-fg: #9F1F17;   /* Istekao */
+  --st-soon-bg: #FFF1CC;     --st-soon-fg: #7A4F00;      /* Ističe uskoro, Treba upisati */
+  --st-valid-bg: #E3F3E8;    --st-valid-fg: #1B5E32;     /* Vrijedi */
+  --st-neutral-bg: #EEF0F4;  --st-neutral-fg: #454C5E;   /* Nema, Nepoznato */
+  --dot-expired: #C23B30;    /* točka na chipu „Liječnički istekao" */
+  --dot-register: #D9930D;   /* točka na chipu „Treba upisati" */
+
+  /* Pojasevi (traka 30×10 px) */
+  --belt-9-a: #FFFFFF; --belt-9-b: #F2D13B;  /* bijeložuti – pola/pola */
+  --belt-8: #F2C230;                         /* žuti */
+  --belt-7: #EE8A2B;                         /* narančasti */
+  --belt-6: #D0342C;                         /* crveni */
+  --belt-5: #3C9A4B;                         /* zeleni */
+  --belt-4: #2F6FD0;                         /* plavi */
+  --belt-3: #7A4BB5;                         /* ljubičasti */
+  --belt-2: #7A4A2B;                         /* smeđi */
+  --belt-1-a: #7A4A2B; --belt-1-b: #14171F;  /* smeđe crni – pola/pola */
+  --belt-border: rgba(20, 23, 31, 0.3);
+  --belt-none-border: #9AA2B2;               /* bez pojasa: puni rub; nije uneseno: isprekidani rub */
+
+  /* Tipografija */
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Radijusi */
+  --r-tag: 6px;
+  --r-control: 10px;   /* inputi, gumbi */
+  --r-card: 12px;      /* tablica, kartice */
+  --r-dialog: 16px;
+  --r-pill: 999px;     /* chipovi, statusne oznake */
+
+  /* Veličine */
+  --control-h: 44px;
+  --chip-h: 40px;
+  --topbar-h: 60px;
+  --container-max: 1344px;
+  --drawer-w: 680px;
+  --dialog-w: 440px;
+
+  /* Sjene i overlay */
+  --shadow-drawer: -16px 0 48px rgba(20, 23, 31, 0.2);
+  --shadow-dialog: 0 24px 64px rgba(20, 23, 31, 0.3);
+  --shadow-toast: 0 12px 32px rgba(20, 23, 31, 0.3);
+  --overlay-drawer: rgba(20, 23, 31, 0.45);
+  --overlay-dialog: rgba(20, 23, 31, 0.55);
+}
