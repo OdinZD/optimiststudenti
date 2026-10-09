@@ -114,4 +114,12 @@ final class StudentsListTest extends TestCase
             ->set('ageKey', 'u12')
             ->assertViewHas('subtitle', 'Prikazano 20 od 79');
     }
+
+    public function test_export_downloads_filtered_roster(): void
+    {
+        Livewire::test(StudentsList::class)
+            ->set('ageKey', 'u12')
+            ->call('export')
+            ->assertFileDownloaded('polaznici-2026-10-07.xlsx');
+    }
 }

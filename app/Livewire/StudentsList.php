@@ -10,16 +10,20 @@ use App\Models\Location;
 use App\Models\Student;
 use App\Models\TrainingGroup;
 use App\Support\AgeCategory;
+use App\Support\CompetitionExport;
 use App\Support\CroatianCollator;
 use App\Support\Diacritics;
 use App\Support\MedicalStatus;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Writer\XLSX\Writer;
 
 #[Layout('components.layouts.app')]
 #[Title('Polaznici')]
@@ -69,6 +73,24 @@ final class StudentsList extends Component
     public function resetFilters(): void
     {
         $this->reset(['search', 'ageKey', 'location', 'group', 'belt', 'expiredOnly', 'toRegisterOnly']);
+    }
+
+    /** Export the currently filtered students to an .xlsx roster (no OIB, no medical). */
+    public function export()
+    {
+        $export = CompetitionExport::build($this->rows(), $this->today());
+
+        $path = storage_path('app/'.Str::uuid()->toString().'.xlsx');
+
+        $writer = new Writer;
+        $writer->openToFile($path);
+        $writer->addRow(Row::fromValues($export['headers']));
+        foreach ($export['rows'] as $row) {
+            $writer->addRow(Row::fromValues($row));
+        }
+        $writer->close();
+
+        return response()->download($path, 'polaznici-'.$this->today()->format('Y-m-d').'.xlsx')->deleteFileAfterSend();
     }
 
     public function hasActiveFilters(): bool

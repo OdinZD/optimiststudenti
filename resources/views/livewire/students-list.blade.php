@@ -6,10 +6,18 @@
             <p class="text-[15px] text-[var(--ink2)] mt-0.5">{{ $subtitle }}</p>
         </div>
 
-        <button type="button" wire:click="$dispatch('new-student', { locationSlug: @js($location) })"
-                class="h-11 px-4 rounded-[var(--r-control)] bg-[var(--acc)] text-white font-semibold text-[15px] transition hover:brightness-110">
-            + Novi polaznik
-        </button>
+        <div class="flex items-center gap-2">
+            <button type="button" wire:click="export" wire:target="export" wire:loading.attr="disabled"
+                    class="h-11 px-4 rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] font-semibold text-[15px] text-[var(--ink2)] transition hover:bg-[var(--bg)] inline-flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+                <span wire:loading.remove wire:target="export">Izvezi u Excel</span>
+                <span wire:loading wire:target="export">Izvoz…</span>
+            </button>
+            <button type="button" wire:click="$dispatch('new-student', { locationSlug: @js($location) })"
+                    class="h-11 px-4 rounded-[var(--r-control)] bg-[var(--acc)] text-white font-semibold text-[15px] transition hover:brightness-110">
+                + Novi polaznik
+            </button>
+        </div>
     </div>
 
     {{-- Age chips --}}
