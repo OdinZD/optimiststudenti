@@ -17,6 +17,12 @@
             <span class="font-display text-[20px] font-bold text-[var(--ink)]">Optimist</span>
 
             @auth
+                <nav class="flex items-center gap-1 ml-4 sm:ml-6 text-[14px] font-semibold">
+                    <a href="{{ route('polaznici') }}"
+                       @class(['px-3 h-9 inline-flex items-center rounded-[var(--r-control)] transition', 'bg-[var(--tint)] text-[var(--acc)]' => request()->routeIs('polaznici'), 'text-[var(--ink2)] hover:bg-[var(--bg)]' => ! request()->routeIs('polaznici')])>Polaznici</a>
+                    <a href="{{ route('natjecanja') }}"
+                       @class(['px-3 h-9 inline-flex items-center rounded-[var(--r-control)] transition', 'bg-[var(--tint)] text-[var(--acc)]' => request()->routeIs('natjecanja'), 'text-[var(--ink2)] hover:bg-[var(--bg)]' => ! request()->routeIs('natjecanja')])>Natjecanja</a>
+                </nav>
                 <form method="POST" action="{{ route('logout') }}" class="ml-auto">
                     @csrf
                     <button type="submit"

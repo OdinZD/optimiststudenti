@@ -198,6 +198,14 @@
                             <input type="checkbox" wire:model="flagT" class="w-4 h-4"> Oznaka „t”
                         </label>
                     </section>
+
+                    {{-- 6 · Natjecanja i rezultati (samo kod uređivanja postojećeg polaznika) --}}
+                    @if ($studentId)
+                        <section class="border-t border-[var(--line)] pt-5">
+                            <h3 class="font-display text-[16px] font-semibold text-[var(--ink)] mb-3">Natjecanja i rezultati</h3>
+                            <livewire:student-results :student-id="$studentId" :key="'results-'.$studentId" />
+                        </section>
+                    @endif
                 </div>
 
                 {{-- Footer --}}

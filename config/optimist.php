@@ -17,4 +17,7 @@ return [
 
     'default_password' => env('OPTIMIST_DEFAULT_PASSWORD'),
 
+    // Ime kluba u zaglavlju PDF izvješća.
+    'club_name' => env('OPTIMIST_CLUB_NAME', 'Karate klub Optimist'),
+
 ];

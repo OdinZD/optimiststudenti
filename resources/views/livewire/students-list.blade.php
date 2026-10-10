@@ -6,7 +6,16 @@
             <p class="text-[15px] text-[var(--ink2)] mt-0.5">{{ $subtitle }}</p>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
+            <label class="inline-flex items-center gap-2 text-[14px] font-semibold text-[var(--ink2)]">
+                Godina izvješća
+                <select wire:model.live="reportYear"
+                        class="h-11 rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] px-2 text-[15px] font-normal text-[var(--ink)] focus:outline-none">
+                    @foreach ($reportYears as $y)
+                        <option value="{{ $y }}">{{ $y }}.</option>
+                    @endforeach
+                </select>
+            </label>
             <button type="button" wire:click="export" wire:target="export" wire:loading.attr="disabled"
                     class="h-11 px-4 rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] font-semibold text-[15px] text-[var(--ink2)] transition hover:bg-[var(--bg)] inline-flex items-center gap-2">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
@@ -111,7 +120,7 @@
                     <th class="px-4 py-3 font-semibold" style="width:190px">Uzrast</th>
                     <th class="px-4 py-3 font-semibold" style="width:150px">Liječnički</th>
                     <th class="px-4 py-3 font-semibold" style="width:200px">Roditelj / kontakt</th>
-                    <th class="px-4 py-3 font-semibold" style="width:104px"><span class="sr-only">Radnje</span></th>
+                    <th class="px-4 py-3 font-semibold" style="width:150px"><span class="sr-only">Radnje</span></th>
                 </tr>
             </thead>
             <tbody>
@@ -169,6 +178,11 @@
                         </td>
                         <td class="px-4 py-3 align-top">
                             <div class="flex items-center gap-1 justify-end">
+                                <button type="button" wire:click="report({{ $s->id }})" title="Izvješće (PDF)"
+                                        class="w-11 h-11 inline-flex items-center justify-center rounded-[var(--r-control)] text-[var(--ink2)] transition hover:bg-[var(--tint)]"
+                                        aria-label="Izvješće (PDF): {{ $s->last_name }} {{ $s->first_name }}">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h4"/></svg>
+                                </button>
                                 <button type="button" wire:click="$dispatch('edit-student', { id: {{ $s->id }} })"
                                         class="w-11 h-11 inline-flex items-center justify-center rounded-[var(--r-control)] text-[var(--ink2)] transition hover:bg-[var(--tint)]"
                                         aria-label="Uredi: {{ $s->last_name }} {{ $s->first_name }}">
@@ -214,6 +228,10 @@
                         <div class="text-[13px] text-[var(--ink3)] mt-0.5">{{ $s->location?->name ?? '—' }}</div>
                     </div>
                     <div class="flex items-center gap-1 shrink-0">
+                        <button type="button" wire:click="report({{ $s->id }})" title="Izvješće (PDF)"
+                                class="w-11 h-11 inline-flex items-center justify-center rounded-[var(--r-control)] text-[var(--ink2)]" aria-label="Izvješće (PDF): {{ $s->last_name }} {{ $s->first_name }}">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h4"/></svg>
+                        </button>
                         <button type="button" wire:click="$dispatch('edit-student', { id: {{ $s->id }} })"
                                 class="w-11 h-11 inline-flex items-center justify-center rounded-[var(--r-control)] text-[var(--ink2)]" aria-label="Uredi: {{ $s->last_name }} {{ $s->first_name }}">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>

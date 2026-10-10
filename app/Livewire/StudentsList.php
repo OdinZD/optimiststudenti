@@ -10,10 +10,12 @@ use App\Models\Location;
 use App\Models\Student;
 use App\Models\TrainingGroup;
 use App\Support\AgeCategory;
+use App\Support\ChildReport;
 use App\Support\CompetitionExport;
 use App\Support\CroatianCollator;
 use App\Support\Diacritics;
 use App\Support\MedicalStatus;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -58,6 +60,13 @@ final class StudentsList extends Component
 
     private ?Collection $cache = null;
 
+    public int $reportYear = 0;
+
+    public function mount(): void
+    {
+        $this->reportYear = (int) now()->year;
+    }
+
     public function setAge(string $key): void
     {
         $this->ageKey = $this->ageKey === $key ? '' : $key;
@@ -91,6 +100,20 @@ final class StudentsList extends Component
         $writer->close();
 
         return response()->download($path, 'polaznici-'.$this->today()->format('Y-m-d').'.xlsx')->deleteFileAfterSend();
+    }
+
+    /** Per-child end-of-year competition report (PDF) for the selected year. */
+    public function report(int $id)
+    {
+        $child = Student::findOrFail($id);
+        $data = ChildReport::build($child, $this->reportYear);
+
+        $path = storage_path('app/'.Str::uuid()->toString().'.pdf');
+        Pdf::loadView('pdf.child-report', $data)->setPaper('a4')->save($path);
+
+        $filename = 'izvjesce-'.Str::slug("{$child->last_name} {$child->first_name}")."-{$this->reportYear}.pdf";
+
+        return response()->download($path, $filename)->deleteFileAfterSend();
     }
 
     public function hasActiveFilters(): bool
@@ -238,6 +261,7 @@ final class StudentsList extends Component
             'belts' => Belt::options(),
             'subtitle' => $this->subtitle($rows->count()),
             'filtersActive' => $this->hasActiveFilters(),
+            'reportYears' => range((int) now()->year, (int) now()->year - 4),
         ]);
     }
 }
