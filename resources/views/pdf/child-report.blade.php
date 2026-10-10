@@ -6,6 +6,7 @@
         @page { margin: 28mm 18mm; }
         * { font-family: "DejaVu Sans", sans-serif; }
         body { color: #14171F; font-size: 11px; line-height: 1.4; }
+        .logo { text-align: center; margin: 0 0 8px; }
         .club { color: #2D3E7B; font-size: 13px; font-weight: bold; letter-spacing: .3px; }
         .title { font-size: 20px; font-weight: bold; margin: 2px 0 0; }
         .child { font-size: 16px; margin: 14px 0 0; }
@@ -27,6 +28,10 @@
     </style>
 </head>
 <body>
+    @php($logo = public_path('images/KKoptimist.png'))
+    @if (is_file($logo))
+        <div class="logo"><img src="{{ $logo }}" height="56" alt=""></div>
+    @endif
     <div class="club">{{ $club }}</div>
     <div class="title">Izvješće o natjecanjima — {{ $year }}.</div>
     <div class="rule"></div>
