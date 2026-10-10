@@ -108,8 +108,21 @@ final class StudentsList extends Component
         $child = Student::findOrFail($id);
         $data = ChildReport::build($child, $this->reportYear);
 
-        $path = storage_path('app/'.Str::uuid()->toString().'.pdf');
-        Pdf::loadView('pdf.child-report', $data)->setPaper('a4')->save($path);
+        // Shared hosting (cPanel): dompdf's defaults — sys_get_temp_dir() (/tmp) and
+        // storage_path('fonts') — are often blocked by open_basedir or simply missing,
+        // which makes rendering fail with a 500. Point dompdf's temp + font cache at a
+        // writable directory inside the app instead.
+        $work = storage_path('app/dompdf');
+        if (! is_dir($work) && ! mkdir($work, 0775, true) && ! is_dir($work)) {
+            abort(500, 'Ne mogu pripremiti mapu za PDF.');
+        }
+
+        $path = $work.'/'.Str::uuid()->toString().'.pdf';
+        Pdf::loadView('pdf.child-report', $data)
+            ->setPaper('a4')
+            ->setOption('temp_dir', $work)
+            ->setOption('font_cache', $work)
+            ->save($path);
 
         $filename = 'izvjesce-'.Str::slug("{$child->last_name} {$child->first_name}")."-{$this->reportYear}.pdf";
 
