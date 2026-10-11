@@ -16,6 +16,7 @@ use App\Support\CroatianCollator;
 use App\Support\Diacritics;
 use App\Support\MedicalReminders;
 use App\Support\MedicalStatus;
+use App\Support\SpreadsheetWriter;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
@@ -25,8 +26,6 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
-use OpenSpout\Common\Entity\Row;
-use OpenSpout\Writer\XLSX\Writer;
 
 #[Layout('components.layouts.app')]
 #[Title('Polaznici')]
@@ -94,6 +93,7 @@ final class StudentsList extends Component
         return $this->downloadXlsx(
             CompetitionExport::build($this->rows(), $this->today()),
             'polaznici-'.$this->today()->format('Y-m-d').'.xlsx',
+            'Popis polaznika',
         );
     }
 
@@ -103,25 +103,22 @@ final class StudentsList extends Component
         return $this->downloadXlsx(
             MedicalReminders::build($this->rows(), $this->today()),
             'lijecnicki-podsjetnici-'.$this->today()->format('Y-m-d').'.xlsx',
+            'Liječnički podsjetnici',
         );
     }
 
     /**
-     * Write an {headers, rows} export to a temp .xlsx and stream it as a download.
+     * Write an {headers, rows} export to a styled temp .xlsx (banner + bold header +
+     * zebra rows) and stream it as a download.
      *
      * @param  array{headers: list<string>, rows: list<list<string>>}  $export
      */
-    private function downloadXlsx(array $export, string $filename)
+    private function downloadXlsx(array $export, string $filename, string $title)
     {
         $path = storage_path('app/'.Str::uuid()->toString().'.xlsx');
+        $banner = config('optimist.club_name').' — '.$title.' · '.$this->today()->format('d.m.Y.');
 
-        $writer = new Writer;
-        $writer->openToFile($path);
-        $writer->addRow(Row::fromValues($export['headers']));
-        foreach ($export['rows'] as $row) {
-            $writer->addRow(Row::fromValues($row));
-        }
-        $writer->close();
+        SpreadsheetWriter::write($path, $banner, $export);
 
         return response()->download($path, $filename)->deleteFileAfterSend();
     }

@@ -34,6 +34,7 @@ return array(
     'App\\Support\\MedicalReminders' => $baseDir . '/app/Support/MedicalReminders.php',
     'App\\Support\\MedicalStatus' => $baseDir . '/app/Support/MedicalStatus.php',
     'App\\Support\\Phone' => $baseDir . '/app/Support/Phone.php',
+    'App\\Support\\SpreadsheetWriter' => $baseDir . '/app/Support/SpreadsheetWriter.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Barryvdh\\DomPDF\\Facade\\Pdf' => $vendorDir . '/barryvdh/laravel-dompdf/src/Facade/Pdf.php',
     'Barryvdh\\DomPDF\\PDF' => $vendorDir . '/barryvdh/laravel-dompdf/src/PDF.php',
