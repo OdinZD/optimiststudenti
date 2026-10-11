@@ -26,7 +26,6 @@ final class ReferenceSeeder extends Seeder
     private const GROUPS = [
         ['slug' => 'pocetnici', 'name' => 'Početnici', 'description' => '6–8 godina'],
         ['slug' => 'stariji-pocetnici', 'name' => 'Stariji početnici', 'description' => '8 i više godina'],
-        ['slug' => 'kata-timovi', 'name' => 'Kata timovi', 'description' => 'Timski kata'],
         ['slug' => 'kata-napredni', 'name' => 'Kata napredni', 'description' => 'Napredna skupina'],
         ['slug' => 'kumite-stariji', 'name' => 'Kumite stariji', 'description' => null],
         ['slug' => 'kumite-mladi', 'name' => 'Kumite mlađi', 'description' => null],

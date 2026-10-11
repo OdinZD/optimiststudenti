@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Enums\Belt;
+use App\Models\KataTeam;
 use App\Models\Location;
 use App\Models\Student;
 use App\Models\TrainingGroup;
@@ -58,6 +59,9 @@ final class StudentForm extends Component
 
     public bool $flagT = false;
 
+    /** Kata team ids the student belongs to (many-to-many; kept as strings for checkbox binding). */
+    public array $kataTeamIds = [];
+
     protected function rules(): array
     {
         return [
@@ -81,6 +85,8 @@ final class StudentForm extends Component
             'parentEmail' => ['nullable', 'email'],
             'note' => ['nullable', 'string', 'max:2000'],
             'flagT' => ['boolean'],
+            'kataTeamIds' => ['array'],
+            'kataTeamIds.*' => ['exists:kata_teams,id'],
         ];
     }
 
@@ -132,6 +138,7 @@ final class StudentForm extends Component
         $this->parentEmail = $student->parent_email ?? '';
         $this->note = $student->note ?? '';
         $this->flagT = $student->flag_t;
+        $this->kataTeamIds = $student->kataTeams->pluck('id')->sort()->values()->map(fn (int $id): string => (string) $id)->all();
 
         $this->open = true;
     }
@@ -208,6 +215,8 @@ final class StudentForm extends Component
             ? tap(Student::findOrFail($this->studentId))->update($data)
             : Student::create($data);
 
+        $student->kataTeams()->sync($this->kataTeamIds);
+
         $this->dispatch('students-changed');
         $this->dispatch('toast', message: "Spremljeno: {$student->last_name} {$student->first_name}");
         $this->close();
@@ -218,7 +227,7 @@ final class StudentForm extends Component
         $this->reset([
             'lastName', 'firstName', 'birthDate', 'oib', 'locationId', 'trainingGroupId',
             'belt', 'nextGradeStatus', 'nextGradeKyu', 'medicalValidUntil', 'hasNoMedical',
-            'parentName', 'parentPhone', 'parentEmail', 'note', 'flagT', 'submitted',
+            'parentName', 'parentPhone', 'parentEmail', 'note', 'flagT', 'kataTeamIds', 'submitted',
         ]);
     }
 
@@ -234,6 +243,7 @@ final class StudentForm extends Component
             'locations' => Location::orderBy('name')->get(),
             'groups' => TrainingGroup::orderBy('name')->get(),
             'belts' => Belt::options(),
+            'kataTeams' => KataTeam::orderBy('name')->get(),
         ]);
     }
 }

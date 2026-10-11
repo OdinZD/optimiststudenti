@@ -151,6 +151,9 @@
                             @if ($s->flag_t)
                                 <span class="ml-1 inline-block rounded-[var(--r-tag)] px-1.5 text-[11px] font-semibold align-middle" style="background:var(--neutral-pill);color:var(--ink2)">t</span>
                             @endif
+                            @foreach ($s->kataTeams as $team)
+                                <span class="ml-1 inline-flex items-center gap-1 rounded-[var(--r-tag)] px-1.5 text-[11px] font-semibold align-middle" style="background:var(--neutral-pill);color:var(--ink2)"><span class="w-2 h-2 rounded-full" style="background:{{ $team->color }}"></span>{{ $team->name }}</span>
+                            @endforeach
                             <div class="text-[13px] text-[var(--ink3)] mt-0.5">{{ $s->location?->name ?? '—' }}</div>
                         </td>
                         <td class="px-4 py-3 align-top">
@@ -241,6 +244,9 @@
                         @if ($s->flag_t)
                             <span class="ml-1 inline-block rounded-[var(--r-tag)] px-1.5 text-[11px] font-semibold align-middle" style="background:var(--neutral-pill);color:var(--ink2)">t</span>
                         @endif
+                        @foreach ($s->kataTeams as $team)
+                            <span class="ml-1 inline-flex items-center gap-1 rounded-[var(--r-tag)] px-1.5 text-[11px] font-semibold align-middle" style="background:var(--neutral-pill);color:var(--ink2)"><span class="w-2 h-2 rounded-full" style="background:{{ $team->color }}"></span>{{ $team->name }}</span>
+                        @endforeach
                         <div class="text-[13px] text-[var(--ink3)] mt-0.5">{{ $s->location?->name ?? '—' }}</div>
                     </div>
                     <div class="flex items-center gap-1 shrink-0">

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Livewire\StudentForm;
+use App\Models\KataTeam;
 use App\Models\Location;
 use App\Models\Student;
 use App\Models\TrainingGroup;
@@ -104,6 +105,33 @@ final class StudentFormTest extends TestCase
             ->assertHasNoErrors();
 
         $this->assertSame('Ivan', $student->fresh()->first_name);
+    }
+
+    public function test_syncs_and_preloads_kata_teams(): void
+    {
+        $teamA = KataTeam::create(['name' => 'Tim A', 'color' => '#2D3E7B']);
+        $teamB = KataTeam::create(['name' => 'Tim B', 'color' => '#C23B30']);
+
+        Livewire::test(StudentForm::class)
+            ->call('openCreate')
+            ->set('lastName', 'Anđić')
+            ->set('firstName', 'Laura')
+            ->set('kataTeamIds', [(string) $teamA->id, (string) $teamB->id])
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $child = Student::where('last_name', 'Anđić')->firstOrFail();
+        $this->assertEqualsCanonicalizing([$teamA->id, $teamB->id], $child->kataTeams->pluck('id')->all());
+
+        // edit preloads current teams (sorted asc) and can change the set
+        Livewire::test(StudentForm::class)
+            ->call('openEdit', $child->id)
+            ->assertSet('kataTeamIds', [(string) $teamA->id, (string) $teamB->id])
+            ->set('kataTeamIds', [(string) $teamB->id])
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertSame([$teamB->id], $child->fresh()->kataTeams->pluck('id')->all());
     }
 
     public function test_live_age_category_updates_with_birth_date(): void

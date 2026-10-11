@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Livewire\StudentsList;
+use App\Models\KataTeam;
 use App\Models\Student;
 use App\Models\User;
 use App\Support\MedicalStatus;
@@ -141,5 +142,14 @@ final class StudentsListTest extends TestCase
         Livewire::test(StudentsList::class)
             ->call('medicalReminders')
             ->assertFileDownloaded('lijecnicki-podsjetnici-2026-10-07.xlsx');
+    }
+
+    public function test_kata_team_marker_renders_on_list(): void
+    {
+        $team = KataTeam::create(['name' => 'Tim A', 'color' => '#2D3E7B']);
+        $child = Student::create(['last_name' => 'Žarković', 'first_name' => 'Test']);
+        $child->kataTeams()->attach($team->id);
+
+        Livewire::test(StudentsList::class)->assertSee('Tim A');
     }
 }

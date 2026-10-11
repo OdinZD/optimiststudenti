@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -71,6 +72,11 @@ final class Student extends Model
     public function competitionResults(): HasMany
     {
         return $this->hasMany(CompetitionResult::class);
+    }
+
+    public function kataTeams(): BelongsToMany
+    {
+        return $this->belongsToMany(KataTeam::class);
     }
 
     /** @return Attribute<?AgeCategory, never> */

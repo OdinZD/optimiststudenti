@@ -165,7 +165,7 @@ final class StudentsList extends Component
     /** All non-deleted students, loaded once per request. */
     private function allStudents(): Collection
     {
-        return $this->cache ??= Student::with(['location', 'trainingGroup'])->get();
+        return $this->cache ??= Student::with(['location', 'trainingGroup', 'kataTeams'])->get();
     }
 
     private function today(): CarbonImmutable

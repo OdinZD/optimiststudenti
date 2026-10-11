@@ -140,6 +140,20 @@
                                 </div>
                             @endif
                         </div>
+                        <div class="mt-4">
+                            <span class="block text-[13px] font-semibold text-[var(--ink2)] mb-1.5">Kata timovi</span>
+                            @forelse ($kataTeams as $team)
+                                <label class="inline-flex items-center gap-2 mr-4 mb-2">
+                                    <input type="checkbox" wire:model="kataTeamIds" value="{{ $team->id }}" class="w-4 h-4">
+                                    <span class="inline-flex items-center gap-1.5 text-[14px] text-[var(--ink)]">
+                                        <span class="w-2 h-2 rounded-full" style="background:{{ $team->color }}" aria-hidden="true"></span>
+                                        {{ $team->name }}
+                                    </span>
+                                </label>
+                            @empty
+                                <p class="text-[13px] text-[var(--ink3)]">Još nema timova — dodaj ih na stranici <a href="{{ route('kata-timovi') }}" class="font-semibold text-[var(--acc)] hover:underline">Kata timovi</a>.</p>
+                            @endforelse
+                        </div>
                     </section>
 
                     {{-- 3 · Liječnički pregled --}}

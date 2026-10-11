@@ -22,6 +22,8 @@
                        @class(['px-3 h-9 inline-flex items-center rounded-[var(--r-control)] transition', 'bg-[var(--tint)] text-[var(--acc)]' => request()->routeIs('polaznici'), 'text-[var(--ink2)] hover:bg-[var(--bg)]' => ! request()->routeIs('polaznici')])>Polaznici</a>
                     <a href="{{ route('natjecanja') }}"
                        @class(['px-3 h-9 inline-flex items-center rounded-[var(--r-control)] transition', 'bg-[var(--tint)] text-[var(--acc)]' => request()->routeIs('natjecanja'), 'text-[var(--ink2)] hover:bg-[var(--bg)]' => ! request()->routeIs('natjecanja')])>Natjecanja</a>
+                    <a href="{{ route('kata-timovi') }}"
+                       @class(['px-3 h-9 inline-flex items-center rounded-[var(--r-control)] transition', 'bg-[var(--tint)] text-[var(--acc)]' => request()->routeIs('kata-timovi'), 'text-[var(--ink2)] hover:bg-[var(--bg)]' => ! request()->routeIs('kata-timovi')])>Kata timovi</a>
                 </nav>
                 <form method="POST" action="{{ route('logout') }}" class="ml-auto">
                     @csrf
