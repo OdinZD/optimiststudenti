@@ -5,22 +5,39 @@
             <h1 class="font-display text-[34px] font-semibold tracking-[-0.02em] text-[var(--ink)] leading-tight">Kata timovi</h1>
             <p class="text-[15px] text-[var(--ink2)] mt-0.5">{{ $teams->count() }} {{ $teams->count() === 1 ? 'tim' : 'timova' }}</p>
         </div>
-        <button type="button" wire:click="openCreate"
-                class="h-11 px-4 rounded-[var(--r-control)] bg-[var(--acc)] text-white font-semibold text-[15px] transition hover:brightness-110">
-            + Novi tim
-        </button>
+        <div class="flex items-center gap-2 flex-wrap">
+            <button type="button" wire:click="export" wire:target="export" wire:loading.attr="disabled"
+                    class="h-11 px-4 rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] font-semibold text-[15px] text-[var(--ink2)] transition hover:bg-[var(--bg)] inline-flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+                <span wire:loading.remove wire:target="export">Izvezi u Excel</span>
+                <span wire:loading wire:target="export">Izvoz…</span>
+            </button>
+            <button type="button" wire:click="openCreate"
+                    class="h-11 px-4 rounded-[var(--r-control)] bg-[var(--acc)] text-white font-semibold text-[15px] transition hover:brightness-110">
+                + Novi tim
+            </button>
+        </div>
     </div>
 
     {{-- List --}}
     <div class="mt-5 flex flex-col gap-2">
         @forelse ($teams as $t)
-            <div class="bg-[var(--surface)] rounded-[var(--r-card)] border border-[var(--line)] px-4 py-3 flex items-center justify-between gap-4" wire:key="team-{{ $t->id }}">
-                <button type="button" wire:click="openEdit({{ $t->id }})" class="text-left min-w-0 flex items-center gap-2.5">
-                    <span class="w-4 h-4 rounded-full shrink-0" style="background:{{ $t->color }}" aria-hidden="true"></span>
-                    <span class="text-[15px] font-semibold text-[var(--ink)] truncate">{{ $t->name }}</span>
+            <div class="bg-[var(--surface)] rounded-[var(--r-card)] border border-[var(--line)] px-4 py-3 flex items-start justify-between gap-4" wire:key="team-{{ $t->id }}">
+                <button type="button" wire:click="openEdit({{ $t->id }})" class="text-left min-w-0">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-4 h-4 rounded-full shrink-0" style="background:{{ $t->color }}" aria-hidden="true"></span>
+                        <span class="text-[15px] font-semibold text-[var(--ink)] truncate">{{ $t->name }}</span>
+                    </div>
+                    <div class="text-[13px] text-[var(--ink3)] mt-1 pl-[26px]">
+                        @if ($t->students->isNotEmpty())
+                            {{ $t->students->map(fn ($s) => $s->last_name.' '.$s->first_name)->join(', ') }}
+                        @else
+                            Još nema članova
+                        @endif
+                    </div>
                 </button>
                 <div class="flex items-center gap-1 shrink-0">
-                    <span class="text-[13px] text-[var(--ink3)] mr-2 whitespace-nowrap">{{ $t->students_count }} {{ $t->students_count === 1 ? 'član' : 'članova' }}</span>
+                    <span class="text-[13px] text-[var(--ink3)] mr-2 whitespace-nowrap">{{ $t->students->count() }} {{ $t->students->count() === 1 ? 'član' : 'članova' }}</span>
                     <button type="button" wire:click="openEdit({{ $t->id }})" aria-label="Uredi: {{ $t->name }}"
                             class="w-11 h-11 inline-flex items-center justify-center rounded-[var(--r-control)] text-[var(--ink2)] transition hover:bg-[var(--tint)]">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>

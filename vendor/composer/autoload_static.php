@@ -558,6 +558,7 @@ class ComposerStaticInitcda2add6397422fb1a2eb5b9207f1575
         'App\\Support\\CompetitionExport' => __DIR__ . '/../..' . '/app/Support/CompetitionExport.php',
         'App\\Support\\CroatianCollator' => __DIR__ . '/../..' . '/app/Support/CroatianCollator.php',
         'App\\Support\\Diacritics' => __DIR__ . '/../..' . '/app/Support/Diacritics.php',
+        'App\\Support\\KataTeamExport' => __DIR__ . '/../..' . '/app/Support/KataTeamExport.php',
         'App\\Support\\MedicalReminders' => __DIR__ . '/../..' . '/app/Support/MedicalReminders.php',
         'App\\Support\\MedicalStatus' => __DIR__ . '/../..' . '/app/Support/MedicalStatus.php',
         'App\\Support\\Phone' => __DIR__ . '/../..' . '/app/Support/Phone.php',

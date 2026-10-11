@@ -48,6 +48,39 @@ final class SpreadsheetWriterTest extends TestCase
         $this->assertSame(['Cvić', 'VrloDugačkoImePrezimeZaProvjeruŠirineStupca', '—'], $rows[4]);
     }
 
+    public function test_write_sections_lays_out_banner_titles_headers_and_members(): void
+    {
+        $this->path = sys_get_temp_dir().'/ssw-sec-'.uniqid().'.xlsx';
+
+        $banner = 'Karate klub Optimist — Kata timovi · 11.10.2026.';
+        $headers = ['Prezime', 'Ime', 'Datum rođenja', 'Uzrasna kategorija'];
+        $sections = [
+            ['title' => 'Tim A', 'color' => '#2D3E7B', 'rows' => [
+                ['Anđić', 'Laura', '15.05.2014.', 'U12 · Učenici'],
+                ['Zubak', 'Ana', '01.03.2014.', 'U12 · Učenici'],
+                ['Čović', 'Marko', '02.02.2014.', 'U12 · Učenici'],
+            ]],
+            ['title' => 'Tim B', 'color' => '#C23B30', 'rows' => [
+                ['Horvat', 'Ivo', '01.01.2015.', 'U10 · Mlađi učenici'],
+                ['Kovač', 'Iva', '02.02.2015.', 'U10 · Mlađi učenici'],
+                ['Novak', 'Ena', '03.03.2015.', 'U10 · Mlađi učenici'],
+            ]],
+        ];
+
+        SpreadsheetWriter::writeSections($this->path, $banner, $headers, $sections);
+
+        $rows = $this->readRows($this->path);
+        $firstCells = array_map(static fn (array $r): string => (string) ($r[0] ?? ''), $rows);
+
+        // Empty spacer rows are skipped by the reader, so the first four rows are deterministic.
+        $this->assertSame($banner, $rows[0][0]);
+        $this->assertSame('Tim A', $rows[1][0]);                                         // team-title row
+        $this->assertSame($headers, $rows[2]);                                           // header repeated per team
+        $this->assertSame(['Anđić', 'Laura', '15.05.2014.', 'U12 · Učenici'], $rows[3]); // first member
+        $this->assertContains('Tim B', $firstCells);                                     // second team block present
+        $this->assertContains('Horvat', $firstCells);
+    }
+
     /**
      * @return list<list<mixed>>
      */

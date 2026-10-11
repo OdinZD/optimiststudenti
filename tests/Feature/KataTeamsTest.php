@@ -77,13 +77,35 @@ final class KataTeamsTest extends TestCase
         $this->assertNotSoftDeleted($child); // student kept
     }
 
-    public function test_render_shows_member_count(): void
+    public function test_page_lists_member_names(): void
     {
         $team = KataTeam::create(['name' => 'Tim A', 'color' => '#2D3E7B']);
-        $child = Student::create(['last_name' => 'Anđić', 'first_name' => 'Laura']);
-        $team->students()->attach($child->id);
+        $team->students()->attach(Student::create(['last_name' => 'Anđić', 'first_name' => 'Laura'])->id);
 
         Livewire::test(KataTeamsList::class)
-            ->assertViewHas('teams', fn ($teams): bool => $teams->firstWhere('id', $team->id)->students_count === 1);
+            ->assertViewHas('teams', fn ($teams): bool => $teams->firstWhere('id', $team->id)->students->count() === 1)
+            ->assertSee('Anđić Laura');
+    }
+
+    public function test_export_downloads_when_a_team_has_three_members(): void
+    {
+        $team = KataTeam::create(['name' => 'Tim A', 'color' => '#2D3E7B']);
+        foreach (['Anđić', 'Babić', 'Cvić'] as $last) {
+            $team->students()->attach(Student::create(['last_name' => $last, 'first_name' => 'x'])->id);
+        }
+
+        Livewire::test(KataTeamsList::class)
+            ->call('export')
+            ->assertFileDownloaded();
+    }
+
+    public function test_export_warns_when_no_team_is_competition_ready(): void
+    {
+        $team = KataTeam::create(['name' => 'Tim A', 'color' => '#2D3E7B']);
+        $team->students()->attach(Student::create(['last_name' => 'Anđić', 'first_name' => 'Laura'])->id); // only 1
+
+        Livewire::test(KataTeamsList::class)
+            ->call('export')
+            ->assertDispatched('toast');
     }
 }

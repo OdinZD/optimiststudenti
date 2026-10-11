@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Models\KataTeam;
+use App\Models\Student;
+use App\Support\CroatianCollator;
+use App\Support\KataTeamExport;
+use App\Support\SpreadsheetWriter;
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -114,10 +120,35 @@ final class KataTeamsList extends Component
         $this->dispatch('toast', message: 'Kata tim obrisan');
     }
 
+    /** Export competition-ready teams (≥3 members) to an .xlsx, one coloured block per team. */
+    public function export()
+    {
+        $export = KataTeamExport::build(KataTeam::with('students')->orderBy('name')->get(), CarbonImmutable::now());
+
+        if ($export['sections'] === []) {
+            $this->dispatch('toast', message: 'Nema timova s 3+ člana za izvoz.');
+
+            return null;
+        }
+
+        $path = storage_path('app/'.Str::uuid()->toString().'.xlsx');
+        $banner = config('optimist.club_name').' — Kata timovi · '.CarbonImmutable::now()->format('d.m.Y.');
+        SpreadsheetWriter::writeSections($path, $banner, $export['headers'], $export['sections']);
+
+        return response()->download($path, 'kata-timovi-'.CarbonImmutable::now()->format('Y-m-d').'.xlsx')->deleteFileAfterSend();
+    }
+
     public function render()
     {
-        return view('livewire.kata-teams-list', [
-            'teams' => KataTeam::withCount('students')->orderBy('name')->get(),
-        ]);
+        $teams = KataTeam::with('students')->orderBy('name')->get();
+
+        foreach ($teams as $team) {
+            $team->setRelation('students', $team->students->sort(
+                fn (Student $a, Student $b): int => CroatianCollator::compare($a->last_name, $b->last_name)
+                    ?: CroatianCollator::compare($a->first_name, $b->first_name)
+            )->values());
+        }
+
+        return view('livewire.kata-teams-list', ['teams' => $teams]);
     }
 }
