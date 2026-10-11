@@ -14,6 +14,7 @@ use App\Support\ChildReport;
 use App\Support\CompetitionExport;
 use App\Support\CroatianCollator;
 use App\Support\Diacritics;
+use App\Support\MedicalReminders;
 use App\Support\MedicalStatus;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\CarbonImmutable;
@@ -55,6 +56,9 @@ final class StudentsList extends Component
     #[Url(as: 'istekao', except: false)]
     public bool $expiredOnly = false;
 
+    #[Url(as: 'uskoro', except: false)]
+    public bool $expiringSoonOnly = false;
+
     #[Url(as: 'upisati', except: false)]
     public bool $toRegisterOnly = false;
 
@@ -81,14 +85,34 @@ final class StudentsList extends Component
 
     public function resetFilters(): void
     {
-        $this->reset(['search', 'ageKey', 'location', 'group', 'belt', 'expiredOnly', 'toRegisterOnly']);
+        $this->reset(['search', 'ageKey', 'location', 'group', 'belt', 'expiredOnly', 'expiringSoonOnly', 'toRegisterOnly']);
     }
 
     /** Export the currently filtered students to an .xlsx roster (no OIB, no medical). */
     public function export()
     {
-        $export = CompetitionExport::build($this->rows(), $this->today());
+        return $this->downloadXlsx(
+            CompetitionExport::build($this->rows(), $this->today()),
+            'polaznici-'.$this->today()->format('Y-m-d').'.xlsx',
+        );
+    }
 
+    /** Medical-clearance reminder list (expired / expiring soon / unknown) with parent contacts. */
+    public function medicalReminders()
+    {
+        return $this->downloadXlsx(
+            MedicalReminders::build($this->rows(), $this->today()),
+            'lijecnicki-podsjetnici-'.$this->today()->format('Y-m-d').'.xlsx',
+        );
+    }
+
+    /**
+     * Write an {headers, rows} export to a temp .xlsx and stream it as a download.
+     *
+     * @param  array{headers: list<string>, rows: list<list<string>>}  $export
+     */
+    private function downloadXlsx(array $export, string $filename)
+    {
         $path = storage_path('app/'.Str::uuid()->toString().'.xlsx');
 
         $writer = new Writer;
@@ -99,7 +123,7 @@ final class StudentsList extends Component
         }
         $writer->close();
 
-        return response()->download($path, 'polaznici-'.$this->today()->format('Y-m-d').'.xlsx')->deleteFileAfterSend();
+        return response()->download($path, $filename)->deleteFileAfterSend();
     }
 
     /** Per-child end-of-year competition report (PDF) for the selected year. */
@@ -137,6 +161,7 @@ final class StudentsList extends Component
             || $this->group !== ''
             || $this->belt !== ''
             || $this->expiredOnly
+            || $this->expiringSoonOnly
             || $this->toRegisterOnly;
     }
 
@@ -181,6 +206,11 @@ final class StudentsList extends Component
 
         if ($this->expiredOnly
             && MedicalStatus::for($student->medical_valid_until, $student->has_no_medical, $this->today()) !== MedicalStatus::Expired) {
+            return false;
+        }
+
+        if ($this->expiringSoonOnly
+            && MedicalStatus::for($student->medical_valid_until, $student->has_no_medical, $this->today()) !== MedicalStatus::SoonExpiring) {
             return false;
         }
 
@@ -265,6 +295,9 @@ final class StudentsList extends Component
             'ageChips' => $this->ageChips(),
             'expiredCount' => $this->allStudents()
                 ->filter(fn (Student $s): bool => MedicalStatus::for($s->medical_valid_until, $s->has_no_medical, $today) === MedicalStatus::Expired)
+                ->count(),
+            'expiringSoonCount' => $this->allStudents()
+                ->filter(fn (Student $s): bool => MedicalStatus::for($s->medical_valid_until, $s->has_no_medical, $today) === MedicalStatus::SoonExpiring)
                 ->count(),
             'toRegisterCount' => $this->allStudents()
                 ->filter(fn (Student $s): bool => $s->next_grade_status === NextGradeStatus::ToRegister)

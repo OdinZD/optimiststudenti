@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Livewire\StudentsList;
+use App\Models\Student;
 use App\Models\User;
+use App\Support\MedicalStatus;
 use Carbon\CarbonImmutable;
 use Database\Seeders\PolazniciDataset;
 use Database\Seeders\ReferenceSeeder;
@@ -121,5 +123,23 @@ final class StudentsListTest extends TestCase
             ->set('ageKey', 'u12')
             ->call('export')
             ->assertFileDownloaded('polaznici-2026-10-07.xlsx');
+    }
+
+    public function test_expiring_soon_filter_returns_only_soon_expiring(): void
+    {
+        $today = CarbonImmutable::now();
+        Student::create(['last_name' => 'Testić', 'first_name' => 'Soon', 'medical_valid_until' => $today->addDays(10)->toDateString()]);
+
+        Livewire::test(StudentsList::class)
+            ->set('expiringSoonOnly', true)
+            ->assertViewHas('rows', fn (Collection $rows): bool => $rows->contains(fn ($s): bool => $s->last_name === 'Testić')
+                && $rows->every(fn ($s): bool => MedicalStatus::for($s->medical_valid_until, $s->has_no_medical, $today) === MedicalStatus::SoonExpiring));
+    }
+
+    public function test_medical_reminders_downloads(): void
+    {
+        Livewire::test(StudentsList::class)
+            ->call('medicalReminders')
+            ->assertFileDownloaded('lijecnicki-podsjetnici-2026-10-07.xlsx');
     }
 }

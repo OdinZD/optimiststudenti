@@ -31,6 +31,7 @@ return array(
     'App\\Support\\CompetitionExport' => $baseDir . '/app/Support/CompetitionExport.php',
     'App\\Support\\CroatianCollator' => $baseDir . '/app/Support/CroatianCollator.php',
     'App\\Support\\Diacritics' => $baseDir . '/app/Support/Diacritics.php',
+    'App\\Support\\MedicalReminders' => $baseDir . '/app/Support/MedicalReminders.php',
     'App\\Support\\MedicalStatus' => $baseDir . '/app/Support/MedicalStatus.php',
     'App\\Support\\Phone' => $baseDir . '/app/Support/Phone.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',

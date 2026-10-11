@@ -41,6 +41,20 @@ enum MedicalStatus: string
         };
     }
 
+    /**
+     * Whole days from today until the clearance expires: positive = still valid,
+     * negative = expired that many days ago, null = no date on file. Uses the same
+     * DST-safe day math as for().
+     */
+    public static function daysUntil(?CarbonInterface $validUntil, CarbonInterface $today): ?int
+    {
+        if ($validUntil === null) {
+            return null;
+        }
+
+        return self::wholeDaysBetween($today, $validUntil);
+    }
+
     public function label(): string
     {
         return match ($this) {

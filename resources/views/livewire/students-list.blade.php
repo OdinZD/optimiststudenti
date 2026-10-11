@@ -22,6 +22,12 @@
                 <span wire:loading.remove wire:target="export">Izvezi u Excel</span>
                 <span wire:loading wire:target="export">Izvoz…</span>
             </button>
+            <button type="button" wire:click="medicalReminders" wire:target="medicalReminders" wire:loading.attr="disabled"
+                    class="h-11 px-4 rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] font-semibold text-[15px] text-[var(--ink2)] transition hover:bg-[var(--bg)] inline-flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                <span wire:loading.remove wire:target="medicalReminders">Podsjetnici (Excel)</span>
+                <span wire:loading wire:target="medicalReminders">Izvoz…</span>
+            </button>
             <button type="button" wire:click="$dispatch('new-student', { locationSlug: @js($location) })"
                     class="h-11 px-4 rounded-[var(--r-control)] bg-[var(--acc)] text-white font-semibold text-[15px] transition hover:brightness-110">
                 + Novi polaznik
@@ -89,6 +95,16 @@
                 ])>
             <span class="w-2 h-2 rounded-full" style="background:var(--dot-expired)" aria-hidden="true"></span>
             Liječnički istekao <span @class(['opacity-80' => $expiredOnly, 'text-[var(--ink3)]' => ! $expiredOnly])>{{ $expiredCount }}</span>
+        </button>
+
+        <button type="button" wire:click="$toggle('expiringSoonOnly')" aria-pressed="{{ $expiringSoonOnly ? 'true' : 'false' }}"
+                class="h-11 inline-flex items-center gap-2 rounded-[var(--r-pill)] px-3.5 text-[14px] font-semibold transition"
+                @style([
+                    'background:var(--acc);color:#fff' => $expiringSoonOnly,
+                    'background:var(--surface);color:var(--ink);border:1px solid var(--line2)' => ! $expiringSoonOnly,
+                ])>
+            <span class="w-2 h-2 rounded-full" style="background:var(--dot-register)" aria-hidden="true"></span>
+            Ističe uskoro <span @class(['opacity-80' => $expiringSoonOnly, 'text-[var(--ink3)]' => ! $expiringSoonOnly])>{{ $expiringSoonCount }}</span>
         </button>
 
         <button type="button" wire:click="$toggle('toRegisterOnly')" aria-pressed="{{ $toRegisterOnly ? 'true' : 'false' }}"
