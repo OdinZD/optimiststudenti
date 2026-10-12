@@ -33,7 +33,7 @@
         <div class="logo"><img src="{{ $logo }}" height="80" alt=""></div>
     @endif
     <div class="club">{{ $club }}</div>
-    <div class="title">Izvješće o natjecanjima — {{ $year }}.</div>
+    <div class="title">Izvješće o natjecanjima — sezona {{ $season }}.</div>
     <div class="rule"></div>
     <div class="child"><strong>{{ $childName }}</strong></div>
 
@@ -48,7 +48,7 @@
     </table>
 
     @if (! $hasResults)
-        <p class="muted">Za {{ $year }}. godinu nema zabilježenih natjecanja.</p>
+        <p class="muted">Za sezonu {{ $season }} nema zabilježenih natjecanja.</p>
     @else
         @foreach ($disciplines as $discipline)
             <div class="disc">{{ $discipline['label'] }}</div>

@@ -16,6 +16,7 @@ use App\Support\CroatianCollator;
 use App\Support\Diacritics;
 use App\Support\MedicalReminders;
 use App\Support\MedicalStatus;
+use App\Support\Season;
 use App\Support\SpreadsheetWriter;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\CarbonImmutable;
@@ -63,11 +64,12 @@ final class StudentsList extends Component
 
     private ?Collection $cache = null;
 
-    public int $reportYear = 0;
+    /** Season start year (September year) for the per-child report, e.g. 2025 = season 2025/2026. */
+    public int $reportSeason = 0;
 
     public function mount(): void
     {
-        $this->reportYear = (int) now()->year;
+        $this->reportSeason = Season::current(CarbonImmutable::now());
     }
 
     public function setAge(string $key): void
@@ -123,11 +125,11 @@ final class StudentsList extends Component
         return response()->download($path, $filename)->deleteFileAfterSend();
     }
 
-    /** Per-child end-of-year competition report (PDF) for the selected year. */
+    /** Per-child end-of-season competition report (PDF) for the selected season. */
     public function report(int $id)
     {
         $child = Student::findOrFail($id);
-        $data = ChildReport::build($child, $this->reportYear);
+        $data = ChildReport::build($child, $this->reportSeason);
 
         // Shared hosting (cPanel): dompdf's defaults — sys_get_temp_dir() (/tmp) and
         // storage_path('fonts') — are often blocked by open_basedir or simply missing,
@@ -145,7 +147,7 @@ final class StudentsList extends Component
             ->setOption('font_cache', $work)
             ->save($path);
 
-        $filename = 'izvjesce-'.Str::slug("{$child->last_name} {$child->first_name}")."-{$this->reportYear}.pdf";
+        $filename = 'izvjesce-'.Str::slug("{$child->last_name} {$child->first_name}").'-'.Season::slug($this->reportSeason).'.pdf';
 
         return response()->download($path, $filename)->deleteFileAfterSend();
     }
@@ -304,7 +306,9 @@ final class StudentsList extends Component
             'belts' => Belt::options(),
             'subtitle' => $this->subtitle($rows->count()),
             'filtersActive' => $this->hasActiveFilters(),
-            'reportYears' => range((int) now()->year, (int) now()->year - 4),
+            'reportSeasons' => collect(range(Season::current($today), Season::current($today) - 4))
+                ->map(fn (int $start): array => ['value' => $start, 'label' => Season::label($start)])
+                ->all(),
         ]);
     }
 }

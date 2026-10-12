@@ -10,25 +10,26 @@ use App\Models\CompetitionResult;
 use App\Models\Student;
 
 /**
- * Structured data for a child's end-of-year competition report (one calendar year).
- * Pure arrays so the grouping, totals and medal derivation are unit-testable.
+ * Structured data for a child's end-of-season competition report (one karate season,
+ * 1 Sep → 1 Jul — see App\Support\Season). Pure arrays so the grouping, totals and medal
+ * derivation are unit-testable. $seasonStart is the season's September year (e.g. 2025 = 2025/2026).
  */
 final class ChildReport
 {
     /**
      * @return array{
-     *     childName: string, year: int, club: string,
+     *     childName: string, season: string, club: string,
      *     disciplines: list<array{label: string, rows: list<array<string, string|int|null>>}>,
      *     summary: array{competitions: int, gold: int, silver: int, bronze: int, bouts: int},
      *     hasResults: bool
      * }
      */
-    public static function build(Student $child, int $year): array
+    public static function build(Student $child, int $seasonStart): array
     {
         $results = $child->competitionResults()
             ->with('competition')
             ->get()
-            ->filter(fn (CompetitionResult $r): bool => $r->competition->held_on->year === $year)
+            ->filter(fn (CompetitionResult $r): bool => Season::contains($seasonStart, $r->competition->held_on))
             ->sortBy(fn (CompetitionResult $r) => $r->competition->held_on->getTimestamp());
 
         $disciplines = [];
@@ -56,7 +57,7 @@ final class ChildReport
 
         return [
             'childName' => "{$child->last_name} {$child->first_name}",
-            'year' => $year,
+            'season' => Season::label($seasonStart),
             'club' => (string) config('optimist.club_name'),
             'disciplines' => $disciplines,
             'summary' => [

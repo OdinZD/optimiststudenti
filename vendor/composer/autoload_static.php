@@ -562,6 +562,7 @@ class ComposerStaticInitcda2add6397422fb1a2eb5b9207f1575
         'App\\Support\\MedicalReminders' => __DIR__ . '/../..' . '/app/Support/MedicalReminders.php',
         'App\\Support\\MedicalStatus' => __DIR__ . '/../..' . '/app/Support/MedicalStatus.php',
         'App\\Support\\Phone' => __DIR__ . '/../..' . '/app/Support/Phone.php',
+        'App\\Support\\Season' => __DIR__ . '/../..' . '/app/Support/Season.php',
         'App\\Support\\SpreadsheetWriter' => __DIR__ . '/../..' . '/app/Support/SpreadsheetWriter.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Barryvdh\\DomPDF\\Facade\\Pdf' => __DIR__ . '/..' . '/barryvdh/laravel-dompdf/src/Facade/Pdf.php',

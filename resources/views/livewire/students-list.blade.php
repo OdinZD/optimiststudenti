@@ -8,11 +8,11 @@
 
         <div class="flex items-center gap-2 flex-wrap">
             <label class="inline-flex items-center gap-2 text-[14px] font-semibold text-[var(--ink2)]">
-                Godina izvješća
-                <select wire:model.live="reportYear"
+                Sezona
+                <select wire:model.live="reportSeason"
                         class="h-11 rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] px-2 text-[15px] font-normal text-[var(--ink)] focus:outline-none">
-                    @foreach ($reportYears as $y)
-                        <option value="{{ $y }}">{{ $y }}.</option>
+                    @foreach ($reportSeasons as $s)
+                        <option value="{{ $s['value'] }}">{{ $s['label'] }}</option>
                     @endforeach
                 </select>
             </label>
