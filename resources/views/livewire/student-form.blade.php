@@ -219,6 +219,12 @@
                             <h3 class="font-display text-[16px] font-semibold text-[var(--ink)] mb-3">Natjecanja i rezultati</h3>
                             <livewire:student-results :student-id="$studentId" :key="'results-'.$studentId" />
                         </section>
+
+                        {{-- 7 · Izjava roditelja --}}
+                        <section class="border-t border-[var(--line)] pt-5">
+                            <h3 class="font-display text-[16px] font-semibold text-[var(--ink)] mb-3">Izjava roditelja</h3>
+                            <livewire:student-declaration :student-id="$studentId" :key="'declaration-'.$studentId" />
+                        </section>
                     @endif
                 </div>
 

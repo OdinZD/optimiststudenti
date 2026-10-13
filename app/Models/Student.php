@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 final class Student extends Model
@@ -77,6 +78,11 @@ final class Student extends Model
     public function kataTeams(): BelongsToMany
     {
         return $this->belongsToMany(KataTeam::class);
+    }
+
+    public function declaration(): HasOne
+    {
+        return $this->hasOne(Declaration::class);
     }
 
     /** @return Attribute<?AgeCategory, never> */

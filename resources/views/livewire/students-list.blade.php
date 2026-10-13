@@ -117,6 +117,16 @@
             Treba upisati <span @class(['opacity-80' => $toRegisterOnly, 'text-[var(--ink3)]' => ! $toRegisterOnly])>{{ $toRegisterCount }}</span>
         </button>
 
+        <button type="button" wire:click="$toggle('noDeclarationOnly')" aria-pressed="{{ $noDeclarationOnly ? 'true' : 'false' }}"
+                class="h-11 inline-flex items-center gap-2 rounded-[var(--r-pill)] px-3.5 text-[14px] font-semibold transition"
+                @style([
+                    'background:var(--acc);color:#fff' => $noDeclarationOnly,
+                    'background:var(--surface);color:var(--ink);border:1px solid var(--line2)' => ! $noDeclarationOnly,
+                ])>
+            <span class="w-2 h-2 rounded-full" style="background:var(--dot-register)" aria-hidden="true"></span>
+            Nema izjavu <span @class(['opacity-80' => $noDeclarationOnly, 'text-[var(--ink3)]' => ! $noDeclarationOnly])>{{ $noDeclarationCount }}</span>
+        </button>
+
         @if ($filtersActive)
             <button type="button" wire:click="resetFilters"
                     class="h-11 px-2 text-[14px] font-semibold text-[var(--acc)] transition hover:underline">
@@ -154,6 +164,11 @@
                             @foreach ($s->kataTeams as $team)
                                 <span class="ml-1 inline-flex items-center gap-1 rounded-[var(--r-tag)] px-1.5 text-[11px] font-semibold align-middle" style="background:var(--neutral-pill);color:var(--ink2)"><span class="w-2 h-2 rounded-full" style="background:{{ $team->color }}"></span>{{ $team->name }}</span>
                             @endforeach
+                            @if ($s->declaration)
+                                <span class="ml-1 inline-flex items-center rounded-[var(--r-tag)] px-1.5 text-[11px] font-semibold align-middle" style="background:var(--st-valid-bg);color:var(--st-valid-fg)" title="Izjava učitana"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="sr-only">Izjava učitana</span></span>
+                            @else
+                                <span class="ml-1 inline-block rounded-[var(--r-tag)] px-1.5 text-[11px] font-semibold align-middle" style="background:var(--st-soon-bg);color:var(--st-soon-fg)">nema izjavu</span>
+                            @endif
                             <div class="text-[13px] text-[var(--ink3)] mt-0.5">{{ $s->location?->name ?? '—' }}</div>
                         </td>
                         <td class="px-4 py-3 align-top">
@@ -247,6 +262,11 @@
                         @foreach ($s->kataTeams as $team)
                             <span class="ml-1 inline-flex items-center gap-1 rounded-[var(--r-tag)] px-1.5 text-[11px] font-semibold align-middle" style="background:var(--neutral-pill);color:var(--ink2)"><span class="w-2 h-2 rounded-full" style="background:{{ $team->color }}"></span>{{ $team->name }}</span>
                         @endforeach
+                        @if ($s->declaration)
+                            <span class="ml-1 inline-flex items-center rounded-[var(--r-tag)] px-1.5 text-[11px] font-semibold align-middle" style="background:var(--st-valid-bg);color:var(--st-valid-fg)" title="Izjava učitana"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="sr-only">Izjava učitana</span></span>
+                        @else
+                            <span class="ml-1 inline-block rounded-[var(--r-tag)] px-1.5 text-[11px] font-semibold align-middle" style="background:var(--st-soon-bg);color:var(--st-soon-fg)">nema izjavu</span>
+                        @endif
                         <div class="text-[13px] text-[var(--ink3)] mt-0.5">{{ $s->location?->name ?? '—' }}</div>
                     </div>
                     <div class="flex items-center gap-1 shrink-0">

@@ -62,6 +62,9 @@ final class StudentsList extends Component
     #[Url(as: 'upisati', except: false)]
     public bool $toRegisterOnly = false;
 
+    #[Url(as: 'bez-izjave', except: false)]
+    public bool $noDeclarationOnly = false;
+
     private ?Collection $cache = null;
 
     /** Season start year (September year) for the per-child report, e.g. 2025 = season 2025/2026. */
@@ -86,7 +89,7 @@ final class StudentsList extends Component
 
     public function resetFilters(): void
     {
-        $this->reset(['search', 'ageKey', 'location', 'group', 'belt', 'expiredOnly', 'expiringSoonOnly', 'toRegisterOnly']);
+        $this->reset(['search', 'ageKey', 'location', 'group', 'belt', 'expiredOnly', 'expiringSoonOnly', 'toRegisterOnly', 'noDeclarationOnly']);
     }
 
     /** Export the currently filtered students to an .xlsx roster (no OIB, no medical). */
@@ -161,13 +164,14 @@ final class StudentsList extends Component
             || $this->belt !== ''
             || $this->expiredOnly
             || $this->expiringSoonOnly
-            || $this->toRegisterOnly;
+            || $this->toRegisterOnly
+            || $this->noDeclarationOnly;
     }
 
     /** All non-deleted students, loaded once per request. */
     private function allStudents(): Collection
     {
-        return $this->cache ??= Student::with(['location', 'trainingGroup', 'kataTeams'])->get();
+        return $this->cache ??= Student::with(['location', 'trainingGroup', 'kataTeams', 'declaration'])->get();
     }
 
     private function today(): CarbonImmutable
@@ -214,6 +218,10 @@ final class StudentsList extends Component
         }
 
         if ($this->toRegisterOnly && $student->next_grade_status !== NextGradeStatus::ToRegister) {
+            return false;
+        }
+
+        if ($this->noDeclarationOnly && $student->declaration !== null) {
             return false;
         }
 
@@ -300,6 +308,9 @@ final class StudentsList extends Component
                 ->count(),
             'toRegisterCount' => $this->allStudents()
                 ->filter(fn (Student $s): bool => $s->next_grade_status === NextGradeStatus::ToRegister)
+                ->count(),
+            'noDeclarationCount' => $this->allStudents()
+                ->filter(fn (Student $s): bool => $s->declaration === null)
                 ->count(),
             'locations' => Location::orderBy('name')->get(),
             'groups' => TrainingGroup::orderBy('name')->get(),
