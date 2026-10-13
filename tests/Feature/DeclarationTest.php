@@ -44,9 +44,9 @@ final class DeclarationTest extends TestCase
     {
         $child = Student::create(['last_name' => 'Anđić', 'first_name' => 'Laura']);
 
+        // picking a file auto-saves it (updatedFile hook)
         Livewire::test(StudentDeclaration::class, ['studentId' => $child->id])
             ->set('file', UploadedFile::fake()->create('prva.pdf', 50, 'application/pdf'))
-            ->call('upload')
             ->assertHasNoErrors()
             ->assertDispatched('students-changed');
 
@@ -57,7 +57,6 @@ final class DeclarationTest extends TestCase
         // re-upload replaces: old encrypted file gone, still exactly one row
         Livewire::test(StudentDeclaration::class, ['studentId' => $child->id])
             ->set('file', UploadedFile::fake()->create('druga.pdf', 50, 'application/pdf'))
-            ->call('upload')
             ->assertHasNoErrors();
 
         $this->assertSame(1, Declaration::where('student_id', $child->id)->count());
@@ -86,12 +85,10 @@ final class DeclarationTest extends TestCase
 
         Livewire::test(StudentDeclaration::class, ['studentId' => $child->id])
             ->set('file', UploadedFile::fake()->create('virus.exe', 10))
-            ->call('upload')
             ->assertHasErrors('file');
 
         Livewire::test(StudentDeclaration::class, ['studentId' => $child->id])
             ->set('file', UploadedFile::fake()->create('veliko.pdf', 20000, 'application/pdf')) // ~20 MB > 10 MB
-            ->call('upload')
             ->assertHasErrors('file');
 
         $this->assertDatabaseCount('declarations', 0);

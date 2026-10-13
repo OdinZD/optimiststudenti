@@ -28,12 +28,9 @@
         <div class="flex items-center gap-2 flex-wrap">
             <input type="file" wire:model="file" accept=".pdf,.jpg,.jpeg,.png"
                    class="text-[14px] text-[var(--ink2)] file:mr-3 file:h-9 file:px-3 file:rounded-[var(--r-control)] file:border-0 file:bg-[var(--tint)] file:text-[var(--acc)] file:font-semibold file:cursor-pointer">
-            <button type="button" wire:click="upload" wire:target="upload" wire:loading.attr="disabled" @disabled(! $file)
-                    class="h-9 px-4 rounded-[var(--r-control)] bg-[var(--acc)] text-white text-[14px] font-semibold transition hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed">
-                <span wire:loading.remove wire:target="upload,file">Spremi</span>
-                <span wire:loading wire:target="upload,file">Učitavam…</span>
-            </button>
+            <span wire:loading wire:target="file" class="text-[13px] font-semibold text-[var(--acc)]">Spremam…</span>
         </div>
+        <p class="mt-1 text-[12px] text-[var(--ink3)]">Datoteka se sprema automatski čim je odabereš.</p>
         @error('file') <p class="mt-1.5 text-[13px] font-medium text-[var(--danger)]">{{ $message }}</p> @enderror
     </div>
 </div>

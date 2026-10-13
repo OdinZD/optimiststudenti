@@ -11,8 +11,9 @@ use Livewire\WithFileUploads;
 
 /**
  * Upload / view / remove one student's signed parental declaration. Embedded in the
- * student edit drawer (only when the student exists). Stores the file encrypted on the
- * private disk via App\Support\DeclarationStorage; one declaration per student (replace on re-upload).
+ * student edit drawer (only when the student exists). The file is saved automatically
+ * when picked (the updatedFile() hook) — stored encrypted on the private disk via
+ * App\Support\DeclarationStorage; one declaration per student (replace on re-upload).
  */
 final class StudentDeclaration extends Component
 {
@@ -20,9 +21,7 @@ final class StudentDeclaration extends Component
 
     public int $studentId;
 
-    public bool $submitted = false;
-
-    /** Temporary Livewire upload. */
+    /** Temporary Livewire upload; saved automatically in updatedFile(). */
     public $file;
 
     public function mount(int $studentId): void
@@ -40,15 +39,14 @@ final class StudentDeclaration extends Component
     protected function messages(): array
     {
         return [
-            'file.required' => 'Odaberi datoteku',
             'file.mimes' => 'Dozvoljeno: PDF, JPG ili PNG',
             'file.max' => 'Datoteka je prevelika (najviše 10 MB)',
         ];
     }
 
-    public function upload(): void
+    /** Fired after the file finishes uploading to temp storage — validate + store. */
+    public function updatedFile(): void
     {
-        $this->submitted = true;
         $this->validate();
 
         $meta = DeclarationStorage::store($this->file);
@@ -61,7 +59,7 @@ final class StudentDeclaration extends Component
             Declaration::create(['student_id' => $this->studentId, ...$meta]);
         }
 
-        $this->reset(['file', 'submitted']);
+        $this->reset('file');
         $this->dispatch('students-changed');
         $this->dispatch('toast', message: 'Izjava spremljena');
     }
@@ -75,7 +73,7 @@ final class StudentDeclaration extends Component
             $declaration->delete();
         }
 
-        $this->reset(['file', 'submitted']);
+        $this->reset('file');
         $this->dispatch('students-changed');
         $this->dispatch('toast', message: 'Izjava uklonjena');
     }
