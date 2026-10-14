@@ -29,6 +29,7 @@ final class ChildReportTest extends TestCase
 
         CompetitionResult::create(['student_id' => $child->id, 'competition_id' => $inSeason->id, 'discipline' => 'kate', 'place' => 2, 'wins' => 2, 'losses' => 1]);
         CompetitionResult::create(['student_id' => $child->id, 'competition_id' => $inSeason->id, 'discipline' => 'kumite', 'place' => 1, 'bouts' => 4]);
+        CompetitionResult::create(['student_id' => $child->id, 'competition_id' => $inSeason->id, 'discipline' => 'kata_team', 'place' => 3, 'bouts' => 2]);
         CompetitionResult::create(['student_id' => $child->id, 'competition_id' => $prevSeason->id, 'discipline' => 'kate', 'place' => 3]); // other season, excluded
 
         $data = ChildReport::build($child, 2025);
@@ -36,15 +37,18 @@ final class ChildReportTest extends TestCase
         $this->assertSame('Anđić Laura', $data['childName']);
         $this->assertSame('2025/2026', $data['season']);
         $this->assertTrue($data['hasResults']);
-        $this->assertCount(2, $data['disciplines']); // Kate + Kumite
+        $this->assertCount(3, $data['disciplines']); // Kate + Kumite + Kata team
         $this->assertSame(
-            ['competitions' => 1, 'gold' => 1, 'silver' => 1, 'bronze' => 0, 'bouts' => 7],
+            ['competitions' => 1, 'gold' => 1, 'silver' => 1, 'bronze' => 1, 'bouts' => 9],
             $data['summary'],
         );
 
         $kate = collect($data['disciplines'])->firstWhere('label', 'Kate');
         $this->assertSame('Srebro', $kate['rows'][0]['medal']); // place 2
         $this->assertSame(3, $kate['rows'][0]['bouts']);         // 2 + 1
+
+        $kataTeam = collect($data['disciplines'])->firstWhere('label', 'Kata team');
+        $this->assertSame('Bronca', $kataTeam['rows'][0]['medal']); // place 3
     }
 
     public function test_season_without_results_is_empty(): void

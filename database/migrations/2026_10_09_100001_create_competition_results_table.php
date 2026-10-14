@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
             $table->foreignId('competition_id')->constrained()->cascadeOnDelete();
-            $table->string('discipline', 10);              // kate | kumite
+            $table->string('discipline', 10);              // kate | kumite | kata_team
             $table->string('category', 60)->nullable();    // npr. "U12 -40kg"
             $table->tinyInteger('place')->nullable();      // plasman; medalja se računa iz plasmana
             $table->tinyInteger('wins')->nullable();       // pobjede

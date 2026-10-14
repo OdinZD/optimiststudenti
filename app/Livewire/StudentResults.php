@@ -47,7 +47,7 @@ final class StudentResults extends Component
     {
         return [
             'competitionId' => ['required', 'exists:competitions,id'],
-            'discipline' => ['required', Rule::in(['kate', 'kumite'])],
+            'discipline' => ['required', Rule::enum(Discipline::class)],
             'category' => ['nullable', 'string', 'max:60'],
             'place' => ['nullable', 'integer', 'min:1', 'max:99'],
             'wins' => ['nullable', 'integer', 'min:0', 'max:127'],
