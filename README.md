@@ -44,6 +44,21 @@ php artisan test
 PHP 8.3+ s ekstenzijama `intl` (hrvatsko sortiranje i pretraga), `pdo_mysql`, `mbstring`,
 `openssl`, `bcmath`, `ctype`, `fileinfo`, `tokenizer`.
 
+## PWA (instalacija na mobitel)
+
+Aplikacija se može instalirati na Android početni zaslon (standalone). Sve je statično u `public/`:
+`manifest.json`, `sw.js` (service worker), `offline.html` i ikone u `public/icons/`. Service worker
+namjerno cachira **samo** javni dio (`/build/*`, `/icons/*`, fontovi, offline stranica) — **nikad**
+HTML stranice, `/livewire/*`, `/storage/*`, izjave, izvoze ni išta iza prijave. Registrira se samo
+preko HTTPS-a, pa lokalni razvoj (http) nije zahvaćen.
+
+Pri deployu, uz uobičajeno kopiranje `public/build` → `public_html/build`, kopiraj i nove statične
+datoteke u `public_html/`: `manifest.json`, `sw.js`, `offline.html` i mapu `icons/`. `sw.js` mora biti
+na `public_html/sw.js` (opseg `/`).
+
+**Kad mijenjaš `sw.js`:** podigni verziju cachea u datoteci (`optimist-static-v1` → `-v2`) da se pri
+aktivaciji obriše stari cache, pa ponovno kopiraj `sw.js` u `public_html/`.
+
 ## Dokumentacija
 
 - `docs/design/SPEC.md` — funkcionalna i dizajnerska specifikacija

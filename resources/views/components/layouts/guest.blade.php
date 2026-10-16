@@ -7,6 +7,7 @@
 
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.pwa')
 </head>
 <body class="min-h-screen flex items-center justify-center p-6">
     <main class="w-full max-w-[400px]">

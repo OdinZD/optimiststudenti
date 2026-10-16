@@ -7,6 +7,7 @@
 
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.pwa')
 </head>
 <body>
     <header class="h-[60px] bg-[var(--surface)] border-b border-[var(--line)]">
