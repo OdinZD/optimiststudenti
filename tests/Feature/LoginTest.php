@@ -22,7 +22,10 @@ final class LoginTest extends TestCase
 
     public function test_login_screen_renders(): void
     {
-        $this->get('/login')->assertOk()->assertSeeLivewire(Login::class);
+        $this->get('/login')
+            ->assertOk()
+            ->assertSeeLivewire(Login::class)
+            ->assertSee('Instaliraj Optimist — vođenje kluba'); // PWA install bar markup ships (Alpine toggles visibility)
     }
 
     public function test_no_self_registration_route_exists(): void
