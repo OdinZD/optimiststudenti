@@ -36,6 +36,7 @@ final class AgeCategory
         public readonly string $label,
         public readonly int $age,
         public readonly ?CarbonImmutable $crossover,
+        public readonly ?string $nextLabel,
     ) {}
 
     /** Null birth date => no category (filter "Bez datuma rođenja"). */
@@ -47,17 +48,48 @@ final class AgeCategory
 
         $age = self::ageInYears($birthDate, $today);
 
-        foreach (self::TIERS as $tier) {
+        foreach (self::TIERS as $i => $tier) {
             if ($age < $tier['max']) {
                 $crossover = $tier['months'] > 0
                     ? CarbonImmutable::instance($birthDate)->addMonthsNoOverflow($tier['months'])
                     : null;
 
-                return new self($tier['key'], $tier['label'], $age, $crossover);
+                return new self($tier['key'], $tier['label'], $age, $crossover, self::TIERS[$i + 1]['label'] ?? null);
             }
         }
 
         throw new LogicException('No age tier matched; the final tier should be unbounded.');
+    }
+
+    /**
+     * Months + days until the student crosses into the next category, but only when
+     * that happens within $withinMonths from $today (else null). Null too when there
+     * is no further category (Seniori) or no crossover date.
+     *
+     * @return array{months: int, days: int, nextLabel: string, remaining: string}|null
+     */
+    public function crossoverWithin(CarbonInterface $today, int $withinMonths = 6): ?array
+    {
+        if ($this->crossover === null || $this->nextLabel === null) {
+            return null;
+        }
+
+        $from = CarbonImmutable::instance($today)->startOfDay();
+
+        if ($this->crossover <= $from || $this->crossover > $from->addMonthsNoOverflow($withinMonths)) {
+            return null;
+        }
+
+        $diff = $from->diff($this->crossover);
+        $months = $diff->y * 12 + $diff->m;
+        $days = $diff->d;
+
+        return [
+            'months' => $months,
+            'days' => $days,
+            'nextLabel' => $this->nextLabel,
+            'remaining' => self::remainingLabel($months, $days),
+        ];
     }
 
     /** Completed years, counting a birthday today as already reached. */
@@ -69,5 +101,21 @@ final class AgeCategory
             || ($today->month === $birthDate->month && $today->day < $birthDate->day);
 
         return $birthdayNotYetReached ? $age - 1 : $age;
+    }
+
+    /** "3 mj 12 d", dropping a zero part ("12 d" / "3 mj"); never empty. */
+    private static function remainingLabel(int $months, int $days): string
+    {
+        $parts = [];
+
+        if ($months > 0) {
+            $parts[] = $months.' mj';
+        }
+
+        if ($days > 0 || $months === 0) {
+            $parts[] = $days.' d';
+        }
+
+        return implode(' ', $parts);
     }
 }

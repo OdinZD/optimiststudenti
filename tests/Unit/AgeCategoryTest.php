@@ -70,4 +70,72 @@ final class AgeCategoryTest extends TestCase
 
         $this->assertNotNull($category);
     }
+
+    private function noticeFor(string $birthDate): ?array
+    {
+        return AgeCategory::for(CarbonImmutable::parse($birthDate), CarbonImmutable::parse(self::TODAY))
+            ?->crossoverWithin(CarbonImmutable::parse(self::TODAY), 6);
+    }
+
+    public function test_crossover_within_returns_months_days_and_next_label(): void
+    {
+        // born 2015-01-19 → U12; crosses to U14 on 2027-01-19 = 3 mj 12 d from 2026-10-07
+        $notice = $this->noticeFor('2015-01-19');
+
+        $this->assertNotNull($notice);
+        $this->assertSame(3, $notice['months']);
+        $this->assertSame(12, $notice['days']);
+        $this->assertSame('U14 · Mlađi kadeti', $notice['nextLabel']);
+        $this->assertSame('3 mj 12 d', $notice['remaining']);
+    }
+
+    public function test_crossover_exactly_at_window_is_included_without_zero_days(): void
+    {
+        // crosses exactly 6 months out (2027-04-07) → included, "6 mj"
+        $notice = $this->noticeFor('2015-04-07');
+
+        $this->assertNotNull($notice);
+        $this->assertSame(6, $notice['months']);
+        $this->assertSame(0, $notice['days']);
+        $this->assertSame('6 mj', $notice['remaining']);
+    }
+
+    public function test_crossover_just_beyond_window_is_null(): void
+    {
+        // crosses one day past the 6-month window (2027-04-08) → no notice
+        $this->assertNull($this->noticeFor('2015-04-08'));
+    }
+
+    public function test_crossover_within_days_only_drops_the_months_part(): void
+    {
+        // crosses in 10 days (2026-10-17) → "10 d", no "0 mj"
+        $notice = $this->noticeFor('2014-10-17');
+
+        $this->assertNotNull($notice);
+        $this->assertSame(0, $notice['months']);
+        $this->assertSame(10, $notice['days']);
+        $this->assertSame('10 d', $notice['remaining']);
+    }
+
+    public function test_u21_crossover_targets_seniori(): void
+    {
+        // born 2006-01-19 → U21; crosses to Seniori on 2027-01-19
+        $notice = $this->noticeFor('2006-01-19');
+
+        $this->assertNotNull($notice);
+        $this->assertSame('Seniori', $notice['nextLabel']);
+    }
+
+    public function test_seniori_has_no_crossover_notice(): void
+    {
+        $this->assertNull($this->noticeFor('2003-06-19'));
+    }
+
+    public function test_missing_birth_date_has_no_crossover_notice(): void
+    {
+        $this->assertNull(
+            AgeCategory::for(null, CarbonImmutable::parse(self::TODAY))
+                ?->crossoverWithin(CarbonImmutable::parse(self::TODAY), 6),
+        );
+    }
 }

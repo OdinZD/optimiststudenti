@@ -144,6 +144,25 @@ final class StudentsListTest extends TestCase
             ->assertFileDownloaded('lijecnicki-podsjetnici-2026-10-07.xlsx');
     }
 
+    public function test_crossing_soon_filter_returns_only_students_crossing_within_six_months(): void
+    {
+        // born 2015-01-19 → U12 today, crosses to U14 on 2027-01-19 (~3 mj 12 d from 2026-10-07)
+        Student::create(['last_name' => 'Prelazić', 'first_name' => 'Uskoro', 'birth_date' => '2015-01-19']);
+
+        Livewire::test(StudentsList::class)
+            ->set('crossingSoonOnly', true)
+            ->assertViewHas('rows', fn (Collection $rows): bool => $rows->contains(fn ($s): bool => $s->last_name === 'Prelazić')
+                && $rows->every(fn ($s): bool => $s->crossover_notice !== null));
+    }
+
+    public function test_crossing_soon_marker_renders_on_list(): void
+    {
+        Student::create(['last_name' => 'Prelazić', 'first_name' => 'Uskoro', 'birth_date' => '2015-01-19']);
+
+        Livewire::test(StudentsList::class)
+            ->assertSee('za 3 mj 12 d');
+    }
+
     public function test_kata_team_marker_renders_on_list(): void
     {
         $team = KataTeam::create(['name' => 'Tim A', 'color' => '#2D3E7B']);

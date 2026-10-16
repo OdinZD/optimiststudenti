@@ -93,6 +93,19 @@ final class Student extends Model
         );
     }
 
+    /**
+     * Heads-up when the student crosses into the next age category within 6 months
+     * (null otherwise). Drives the ↑ marker + "Prelazi kategoriju" filter on the list.
+     *
+     * @return Attribute<array{months: int, days: int, nextLabel: string, remaining: string}|null, never>
+     */
+    protected function crossoverNotice(): Attribute
+    {
+        return Attribute::get(
+            fn (): ?array => $this->age_category?->crossoverWithin(CarbonImmutable::now(), 6),
+        );
+    }
+
     /** @return Attribute<MedicalStatus, never> */
     protected function medicalStatus(): Attribute
     {

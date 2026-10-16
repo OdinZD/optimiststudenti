@@ -65,6 +65,9 @@ final class StudentsList extends Component
     #[Url(as: 'bez-izjave', except: false)]
     public bool $noDeclarationOnly = false;
 
+    #[Url(as: 'prelazi', except: false)]
+    public bool $crossingSoonOnly = false;
+
     private ?Collection $cache = null;
 
     /** Season start year (September year) for the per-child report, e.g. 2025 = season 2025/2026. */
@@ -89,7 +92,7 @@ final class StudentsList extends Component
 
     public function resetFilters(): void
     {
-        $this->reset(['search', 'ageKey', 'location', 'group', 'belt', 'expiredOnly', 'expiringSoonOnly', 'toRegisterOnly', 'noDeclarationOnly']);
+        $this->reset(['search', 'ageKey', 'location', 'group', 'belt', 'expiredOnly', 'expiringSoonOnly', 'toRegisterOnly', 'noDeclarationOnly', 'crossingSoonOnly']);
     }
 
     /** Export the currently filtered students to an .xlsx roster (no OIB, no medical). */
@@ -165,7 +168,8 @@ final class StudentsList extends Component
             || $this->expiredOnly
             || $this->expiringSoonOnly
             || $this->toRegisterOnly
-            || $this->noDeclarationOnly;
+            || $this->noDeclarationOnly
+            || $this->crossingSoonOnly;
     }
 
     /** All non-deleted students, loaded once per request. */
@@ -222,6 +226,10 @@ final class StudentsList extends Component
         }
 
         if ($this->noDeclarationOnly && $student->declaration !== null) {
+            return false;
+        }
+
+        if ($this->crossingSoonOnly && $student->crossover_notice === null) {
             return false;
         }
 
@@ -311,6 +319,9 @@ final class StudentsList extends Component
                 ->count(),
             'noDeclarationCount' => $this->allStudents()
                 ->filter(fn (Student $s): bool => $s->declaration === null)
+                ->count(),
+            'crossingSoonCount' => $this->allStudents()
+                ->filter(fn (Student $s): bool => $s->crossover_notice !== null)
                 ->count(),
             'locations' => Location::orderBy('name')->get(),
             'groups' => TrainingGroup::orderBy('name')->get(),
