@@ -191,16 +191,13 @@
                         <td class="px-4 py-3 align-top">
                             @if ($age)
                                 <div class="text-[14px] font-medium text-[var(--ink)]">{{ $age->label }}</div>
-                                <div class="text-[13px] text-[var(--ink3)] mt-0.5">
-                                    {{ $s->birth_date->format('d.m.Y.') }} · {{ $age->age }} g.
-                                    @if ($notice = $s->crossover_notice)
-                                        <span class="ml-0.5 inline-flex align-middle text-[var(--st-soon-fg)]"
-                                              title="→ {{ $notice['nextLabel'] }} za {{ $notice['remaining'] }}">
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
-                                            <span class="sr-only">Prelazi u {{ $notice['nextLabel'] }} za {{ $notice['remaining'] }}</span>
-                                        </span>
-                                    @endif
-                                </div>
+                                <div class="text-[13px] text-[var(--ink3)] mt-0.5">{{ $s->birth_date->format('d.m.Y.') }} · {{ $age->age }} g.</div>
+                                @if ($notice = $s->crossover_notice)
+                                    <div class="mt-0.5 inline-flex items-center gap-0.5 text-[12px] font-medium text-[var(--st-soon-fg)]">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+                                        {{ $notice['nextLabel'] }} za {{ $notice['remaining'] }}
+                                    </div>
+                                @endif
                             @else
                                 <div class="text-[14px] text-[var(--ink3)]">—</div>
                                 <div class="text-[13px] text-[var(--ink3)] mt-0.5">Nema datuma rođenja</div>
