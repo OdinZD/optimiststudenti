@@ -23,5 +23,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // Članarine: evidentiranje uplata / otpis / storno smiju samo admin i blagajnik.
         Gate::define('manage-payments', static fn (User $user): bool => $user->canManagePayments());
+
+        // Članarine: upravljanje tarifama (referentni podaci) smiju samo administratori.
+        Gate::define('manage-fee-plans', static fn (User $user): bool => $user->isAdmin());
     }
 }

@@ -225,6 +225,14 @@
                             <h3 class="font-display text-[16px] font-semibold text-[var(--ink)] mb-3">Izjava roditelja</h3>
                             <livewire:student-declaration :student-id="$studentId" :key="'declaration-'.$studentId" />
                         </section>
+
+                        {{-- 8 · Članarina (samo kad je modul uključen) --}}
+                        @if (config('features.payments'))
+                            <section class="border-t border-[var(--line)] pt-5">
+                                <h3 class="font-display text-[16px] font-semibold text-[var(--ink)] mb-3">Članarina</h3>
+                                <livewire:student-fee-plans :student-id="$studentId" :key="'feeplans-'.$studentId" />
+                            </section>
+                        @endif
                     @endif
                 </div>
 

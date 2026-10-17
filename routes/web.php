@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\DeclarationController;
 use App\Livewire\Auth\Login;
 use App\Livewire\CompetitionsList;
+use App\Livewire\FeePlansList;
 use App\Livewire\KataTeamsList;
 use App\Livewire\StudentsList;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +22,11 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/natjecanja', CompetitionsList::class)->name('natjecanja');
     Route::get('/kata-timovi', KataTeamsList::class)->name('kata-timovi');
     Route::get('/izjava/{student}', DeclarationController::class)->name('izjava');
+
+    // Članarine (modul iza feature flaga). Tarife: samo administratori.
+    if (config('features.payments')) {
+        Route::get('/clanarine/tarife', FeePlansList::class)->middleware('can:manage-fee-plans')->name('fee-plans');
+    }
 
     Route::post('/logout', function () {
         Auth::logout();

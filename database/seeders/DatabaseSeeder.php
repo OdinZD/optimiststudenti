@@ -21,6 +21,7 @@ final class DatabaseSeeder extends Seeder
                 ReferenceSeeder::class,
                 StudentSeeder::class,
                 ClubBillingSettingsSeeder::class,
+                FeePlansSeeder::class,
             ]);
         });
     }

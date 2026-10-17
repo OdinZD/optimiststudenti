@@ -24,6 +24,12 @@ class User extends Authenticatable
         return $this->role?->canManagePayments() ?? false;
     }
 
+    /** Only admins may manage tariffs / reference data (Članarine module). */
+    public function isAdmin(): bool
+    {
+        return $this->role === Role::Admin;
+    }
+
     /**
      * Get the attributes that should be cast.
      *

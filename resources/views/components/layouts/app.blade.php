@@ -11,11 +11,16 @@
 </head>
 <body>
     @auth
-        @php($navItems = [
-            ['route' => 'polaznici', 'label' => 'Polaznici'],
-            ['route' => 'natjecanja', 'label' => 'Natjecanja'],
-            ['route' => 'kata-timovi', 'label' => 'Kata timovi'],
-        ])
+        @php
+            $navItems = [
+                ['route' => 'polaznici', 'label' => 'Polaznici'],
+                ['route' => 'natjecanja', 'label' => 'Natjecanja'],
+                ['route' => 'kata-timovi', 'label' => 'Kata timovi'],
+            ];
+            if (config('features.payments') && auth()->user()?->can('manage-fee-plans')) {
+                $navItems[] = ['route' => 'fee-plans', 'label' => 'Članarine'];
+            }
+        @endphp
     @endauth
     <header class="relative h-[60px] bg-[var(--surface)] border-b border-[var(--line)]" x-data="{ open: false }">
         <div class="mx-auto max-w-[1344px] h-full flex items-center gap-2.5 px-4 sm:px-8">
