@@ -231,6 +231,9 @@
                             <section class="border-t border-[var(--line)] pt-5">
                                 <h3 class="font-display text-[16px] font-semibold text-[var(--ink)] mb-3">Članarina</h3>
                                 <livewire:student-fee-plans :student-id="$studentId" :key="'feeplans-'.$studentId" />
+
+                                <h4 class="text-[14px] font-semibold text-[var(--ink2)] mt-5 mb-2">Zaduženja</h4>
+                                <livewire:student-charges :student-id="$studentId" :key="'charges-'.$studentId" />
                             </section>
                         @endif
                     @endif

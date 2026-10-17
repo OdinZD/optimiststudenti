@@ -532,6 +532,7 @@ class ComposerStaticInitcda2add6397422fb1a2eb5b9207f1575
 
     public static $classMap = array (
         'AllowDynamicProperties' => __DIR__ . '/..' . '/symfony/polyfill-php82/Resources/stubs/AllowDynamicProperties.php',
+        'App\\Console\\Commands\\GenerateChargesCommand' => __DIR__ . '/../..' . '/app/Console/Commands/GenerateChargesCommand.php',
         'App\\Enums\\Belt' => __DIR__ . '/../..' . '/app/Enums/Belt.php',
         'App\\Enums\\Discipline' => __DIR__ . '/../..' . '/app/Enums/Discipline.php',
         'App\\Enums\\FeePlanType' => __DIR__ . '/../..' . '/app/Enums/FeePlanType.php',
@@ -544,6 +545,7 @@ class ComposerStaticInitcda2add6397422fb1a2eb5b9207f1575
         'App\\Livewire\\CompetitionsList' => __DIR__ . '/../..' . '/app/Livewire/CompetitionsList.php',
         'App\\Livewire\\FeePlansList' => __DIR__ . '/../..' . '/app/Livewire/FeePlansList.php',
         'App\\Livewire\\KataTeamsList' => __DIR__ . '/../..' . '/app/Livewire/KataTeamsList.php',
+        'App\\Livewire\\StudentCharges' => __DIR__ . '/../..' . '/app/Livewire/StudentCharges.php',
         'App\\Livewire\\StudentDeclaration' => __DIR__ . '/../..' . '/app/Livewire/StudentDeclaration.php',
         'App\\Livewire\\StudentDelete' => __DIR__ . '/../..' . '/app/Livewire/StudentDelete.php',
         'App\\Livewire\\StudentFeePlans' => __DIR__ . '/../..' . '/app/Livewire/StudentFeePlans.php',
@@ -551,6 +553,7 @@ class ComposerStaticInitcda2add6397422fb1a2eb5b9207f1575
         'App\\Livewire\\StudentResults' => __DIR__ . '/../..' . '/app/Livewire/StudentResults.php',
         'App\\Livewire\\StudentsList' => __DIR__ . '/../..' . '/app/Livewire/StudentsList.php',
         'App\\Models\\AuditLog' => __DIR__ . '/../..' . '/app/Models/AuditLog.php',
+        'App\\Models\\Charge' => __DIR__ . '/../..' . '/app/Models/Charge.php',
         'App\\Models\\ClubBillingSettings' => __DIR__ . '/../..' . '/app/Models/ClubBillingSettings.php',
         'App\\Models\\Competition' => __DIR__ . '/../..' . '/app/Models/Competition.php',
         'App\\Models\\CompetitionResult' => __DIR__ . '/../..' . '/app/Models/CompetitionResult.php',
@@ -566,6 +569,8 @@ class ComposerStaticInitcda2add6397422fb1a2eb5b9207f1575
         'App\\Rules\\Oib' => __DIR__ . '/../..' . '/app/Rules/Oib.php',
         'App\\Support\\AgeCategory' => __DIR__ . '/../..' . '/app/Support/AgeCategory.php',
         'App\\Support\\Auditer' => __DIR__ . '/../..' . '/app/Support/Auditer.php',
+        'App\\Support\\BillingReference' => __DIR__ . '/../..' . '/app/Support/BillingReference.php',
+        'App\\Support\\ChargeGenerator' => __DIR__ . '/../..' . '/app/Support/ChargeGenerator.php',
         'App\\Support\\ChildReport' => __DIR__ . '/../..' . '/app/Support/ChildReport.php',
         'App\\Support\\CompetitionExport' => __DIR__ . '/../..' . '/app/Support/CompetitionExport.php',
         'App\\Support\\CroatianCollator' => __DIR__ . '/../..' . '/app/Support/CroatianCollator.php',

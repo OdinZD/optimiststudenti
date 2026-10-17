@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'AllowDynamicProperties' => $vendorDir . '/symfony/polyfill-php82/Resources/stubs/AllowDynamicProperties.php',
+    'App\\Console\\Commands\\GenerateChargesCommand' => $baseDir . '/app/Console/Commands/GenerateChargesCommand.php',
     'App\\Enums\\Belt' => $baseDir . '/app/Enums/Belt.php',
     'App\\Enums\\Discipline' => $baseDir . '/app/Enums/Discipline.php',
     'App\\Enums\\FeePlanType' => $baseDir . '/app/Enums/FeePlanType.php',
@@ -19,6 +20,7 @@ return array(
     'App\\Livewire\\CompetitionsList' => $baseDir . '/app/Livewire/CompetitionsList.php',
     'App\\Livewire\\FeePlansList' => $baseDir . '/app/Livewire/FeePlansList.php',
     'App\\Livewire\\KataTeamsList' => $baseDir . '/app/Livewire/KataTeamsList.php',
+    'App\\Livewire\\StudentCharges' => $baseDir . '/app/Livewire/StudentCharges.php',
     'App\\Livewire\\StudentDeclaration' => $baseDir . '/app/Livewire/StudentDeclaration.php',
     'App\\Livewire\\StudentDelete' => $baseDir . '/app/Livewire/StudentDelete.php',
     'App\\Livewire\\StudentFeePlans' => $baseDir . '/app/Livewire/StudentFeePlans.php',
@@ -26,6 +28,7 @@ return array(
     'App\\Livewire\\StudentResults' => $baseDir . '/app/Livewire/StudentResults.php',
     'App\\Livewire\\StudentsList' => $baseDir . '/app/Livewire/StudentsList.php',
     'App\\Models\\AuditLog' => $baseDir . '/app/Models/AuditLog.php',
+    'App\\Models\\Charge' => $baseDir . '/app/Models/Charge.php',
     'App\\Models\\ClubBillingSettings' => $baseDir . '/app/Models/ClubBillingSettings.php',
     'App\\Models\\Competition' => $baseDir . '/app/Models/Competition.php',
     'App\\Models\\CompetitionResult' => $baseDir . '/app/Models/CompetitionResult.php',
@@ -41,6 +44,8 @@ return array(
     'App\\Rules\\Oib' => $baseDir . '/app/Rules/Oib.php',
     'App\\Support\\AgeCategory' => $baseDir . '/app/Support/AgeCategory.php',
     'App\\Support\\Auditer' => $baseDir . '/app/Support/Auditer.php',
+    'App\\Support\\BillingReference' => $baseDir . '/app/Support/BillingReference.php',
+    'App\\Support\\ChargeGenerator' => $baseDir . '/app/Support/ChargeGenerator.php',
     'App\\Support\\ChildReport' => $baseDir . '/app/Support/ChildReport.php',
     'App\\Support\\CompetitionExport' => $baseDir . '/app/Support/CompetitionExport.php',
     'App\\Support\\CroatianCollator' => $baseDir . '/app/Support/CroatianCollator.php',
