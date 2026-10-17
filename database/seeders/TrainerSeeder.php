@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -27,13 +28,25 @@ final class TrainerSeeder extends Seeder
             return;
         }
 
+        // Članarine: uloge iz configa (TODO: dok su OPTIMIST_ADMIN_EMAILS /
+        // OPTIMIST_CASHIER_EMAILS prazni, svi ostaju 'trener').
+        $admins = array_map('mb_strtolower', array_values((array) config('optimist.admin_emails', [])));
+        $cashiers = array_map('mb_strtolower', array_values((array) config('optimist.cashier_emails', [])));
+
         foreach ($emails as $email) {
+            $role = match (true) {
+                in_array(mb_strtolower($email), $admins, true) => Role::Admin,
+                in_array(mb_strtolower($email), $cashiers, true) => Role::Blagajnik,
+                default => Role::Trener,
+            };
+
             User::updateOrCreate(
                 ['email' => $email],
                 [
                     // password cast is "hashed" — the plain value is hashed on save.
                     'password' => $password,
                     'name' => (string) Str::of($email)->before('@')->headline(),
+                    'role' => $role,
                 ],
             );
         }
