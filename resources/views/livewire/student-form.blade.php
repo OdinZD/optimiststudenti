@@ -226,8 +226,8 @@
                             <livewire:student-declaration :student-id="$studentId" :key="'declaration-'.$studentId" />
                         </section>
 
-                        {{-- 8 · Članarina (samo kad je modul uključen; dodjela = admin/trener) --}}
-                        @if (config('features.payments') && auth()->user()?->can('assign-fee-plan'))
+                        {{-- 8 · Članarina (modul uključen; dodjela = admin/trener, uplate = admin/blagajnik) --}}
+                        @if (config('features.payments') && (auth()->user()?->can('assign-fee-plan') || auth()->user()?->can('manage-payments')))
                             <section class="border-t border-[var(--line)] pt-5">
                                 <h3 class="font-display text-[16px] font-semibold text-[var(--ink)] mb-3">Članarina</h3>
                                 <livewire:student-fee-plans :student-id="$studentId" :key="'feeplans-'.$studentId" />

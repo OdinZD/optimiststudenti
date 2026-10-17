@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\ChargeStatus;
+use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * One monthly (or manual one-time) membership charge for a student. The amount is a
@@ -30,6 +34,45 @@ final class Charge extends Model
     public function isWrittenOff(): bool
     {
         return $this->written_off_at !== null;
+    }
+
+    /** Net allocated (payments minus storno). */
+    public function allocatedCents(): int
+    {
+        return (int) ($this->relationLoaded('allocations')
+            ? $this->allocations->sum('amount_cents')
+            : $this->allocations()->sum('amount_cents'));
+    }
+
+    public function outstandingCents(): int
+    {
+        return $this->amount_cents - $this->allocatedCents();
+    }
+
+    /** Computed status (never stored): otpisano → plaćeno → kasni → djelomično → neplaćeno. */
+    public function status(?CarbonInterface $today = null): ChargeStatus
+    {
+        if ($this->isWrittenOff()) {
+            return ChargeStatus::WrittenOff;
+        }
+
+        if ($this->outstandingCents() <= 0) {
+            return ChargeStatus::Paid;
+        }
+
+        $today ??= CarbonImmutable::now();
+
+        if ($this->due_date !== null && $this->due_date->lt($today->startOfDay())) {
+            return ChargeStatus::Overdue;
+        }
+
+        return $this->allocatedCents() > 0 ? ChargeStatus::Partial : ChargeStatus::Unpaid;
+    }
+
+    /** @return HasMany<PaymentAllocation, $this> */
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(PaymentAllocation::class);
     }
 
     /** @return BelongsTo<Student, $this> */

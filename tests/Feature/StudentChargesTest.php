@@ -30,10 +30,10 @@ final class StudentChargesTest extends TestCase
         $student = Student::create(['last_name' => 'A', 'first_name' => 'B']);
 
         Livewire::test(StudentCharges::class, ['studentId' => $student->id])
-            ->set('feePlanId', (string) $plan->id) // okida prijedlog iznosa
-            ->assertSet('amount', '30,00')
-            ->set('period', '2026-10')
-            ->call('save')
+            ->set('mcFeePlanId', (string) $plan->id) // okida prijedlog iznosa
+            ->assertSet('mcAmount', '30,00')
+            ->set('mcPeriod', '2026-10')
+            ->call('addCharge')
             ->assertHasNoErrors();
 
         $charge = Charge::firstWhere('student_id', $student->id);
@@ -49,11 +49,11 @@ final class StudentChargesTest extends TestCase
         Charge::create(['student_id' => $student->id, 'fee_plan_id' => $plan->id, 'period' => '2026-10', 'amount_cents' => 3000]);
 
         Livewire::test(StudentCharges::class, ['studentId' => $student->id])
-            ->set('feePlanId', (string) $plan->id)
-            ->set('period', '2026-10')
-            ->set('amount', '30,00')
-            ->call('save')
-            ->assertHasErrors('feePlanId');
+            ->set('mcFeePlanId', (string) $plan->id)
+            ->set('mcPeriod', '2026-10')
+            ->set('mcAmount', '30,00')
+            ->call('addCharge')
+            ->assertHasErrors('mcFeePlanId');
 
         $this->assertSame(1, Charge::where('student_id', $student->id)->count());
     }
