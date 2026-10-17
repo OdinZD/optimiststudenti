@@ -11,6 +11,7 @@ use App\Models\Student;
 use App\Models\StudentFeePlan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -43,6 +44,17 @@ final class StudentFeePlanTest extends TestCase
         $this->assertNull($a->discount_cents);
         $this->assertSame('Ozana Klarić', $a->payer_name);
         $this->assertSame(2000, $a->effectiveAmountCents()); // 2500 − 20%
+    }
+
+    public function test_valid_from_defaults_to_first_of_current_month(): void
+    {
+        Carbon::setTestNow('2026-10-17 10:00:00');
+        $student = Student::create(['last_name' => 'A', 'first_name' => 'B']);
+
+        Livewire::test(StudentFeePlans::class, ['studentId' => $student->id])
+            ->assertSet('validFrom', '2026-10-01');
+
+        Carbon::setTestNow();
     }
 
     public function test_trener_may_assign_a_tariff(): void

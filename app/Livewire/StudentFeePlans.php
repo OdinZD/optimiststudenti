@@ -44,6 +44,7 @@ final class StudentFeePlans extends Component
         $this->authorizeAssign();
         $this->studentId = $studentId;
         $this->payerName = $this->defaultPayer();
+        $this->validFrom = $this->defaultValidFrom();
     }
 
     private function authorizeAssign(): void
@@ -171,6 +172,12 @@ final class StudentFeePlans extends Component
         return (string) (Student::find($this->studentId)?->parent_name ?? '');
     }
 
+    /** Prijedlog: 1. dan tekućeg mjeseca (korisnik ga može promijeniti). */
+    private function defaultValidFrom(): string
+    {
+        return now()->startOfMonth()->format('Y-m-d');
+    }
+
     private function owned(int $id): StudentFeePlan
     {
         return StudentFeePlan::where('student_id', $this->studentId)->findOrFail($id);
@@ -181,6 +188,7 @@ final class StudentFeePlans extends Component
         $this->reset(['editingId', 'submitted', 'feePlanId', 'discountType', 'discountValue', 'validFrom', 'validUntil']);
         $this->discountType = 'none';
         $this->payerName = $this->defaultPayer();
+        $this->validFrom = $this->defaultValidFrom();
     }
 
     public function render()
