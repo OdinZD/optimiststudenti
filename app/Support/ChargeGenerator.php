@@ -29,7 +29,6 @@ final class ChargeGenerator
         }
 
         $dueDate = self::dueDate($start, $settings);
-        $model = $settings?->model;
 
         $assignments = StudentFeePlan::query()
             ->whereHas('feePlan', fn ($q) => $q->where('type', FeePlanType::Monthly->value))
@@ -47,9 +46,10 @@ final class ChargeGenerator
                 ['student_id' => $assignment->student_id, 'fee_plan_id' => $assignment->fee_plan_id, 'period' => $period],
                 [
                     'student_fee_plan_id' => $assignment->id,
+                    'nacin_placanja' => $assignment->nacin_placanja, // kopija s dodjele u trenutku zaduženja
                     'amount_cents' => $assignment->effectiveAmountCents(),
                     'due_date' => $dueDate?->toDateString(),
-                    'reference' => BillingReference::for($assignment->student_id, $period, $model),
+                    'reference' => BillingReference::for($assignment->student_id, $period, null), // interna oznaka {id}-{GGGGMM}
                 ],
             );
 

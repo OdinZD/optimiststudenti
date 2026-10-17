@@ -23,6 +23,7 @@ final class Payment extends Model
         'bank_reference',
         'note',
         'recorded_by',
+        'received_by',
         'reversed_payment_id',
     ];
 

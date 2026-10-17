@@ -23,6 +23,13 @@ final class ClubBillingSettings extends Model
         'billing_months',
         'currency',
         'note',
+        'invoice_line_template',
+        'reminder_days_after_due',
+        'eracuni_username',
+        'eracuni_secret_key',
+        'eracuni_token',
+        'eracuni_endpoint',
+        'eracuni_environment',
     ];
 
     /** The single settings row, or null before it is seeded / filled in. */
@@ -31,11 +38,27 @@ final class ClubBillingSettings extends Model
         return self::query()->first();
     }
 
+    public function isProduction(): bool
+    {
+        return $this->eracuni_environment === 'production';
+    }
+
+    public function hasEracuniCredentials(): bool
+    {
+        return $this->eracuni_username !== null && $this->eracuni_secret_key !== null;
+    }
+
     protected function casts(): array
     {
         return [
             'billing_months' => 'array',
             'due_day' => 'integer',
+            'reminder_days_after_due' => 'integer',
+            // eRačuni vjerodajnice — šifrirane u bazi (AES preko APP_KEY).
+            'eracuni_username' => 'encrypted',
+            'eracuni_secret_key' => 'encrypted',
+            'eracuni_token' => 'encrypted',
+            'eracuni_endpoint' => 'encrypted',
         ];
     }
 }

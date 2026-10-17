@@ -20,6 +20,10 @@
                         class="ml-auto h-10 px-4 rounded-[var(--r-control)] bg-[var(--acc)] text-white text-[14px] font-semibold transition hover:brightness-110">
                     Evidentiraj uplatu
                 </button>
+                <button type="button" wire:click="openCash"
+                        class="h-10 px-4 rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] text-[14px] font-semibold text-[var(--ink2)] hover:bg-[var(--bg)]">
+                    Plaćeno gotovinom
+                </button>
             @endif
         @endcan
     </div>
@@ -39,7 +43,7 @@
                     </div>
                     <div>
                         <label class="block text-[13px] font-semibold text-[var(--ink2)] mb-1.5">Način *</label>
-                        <select wire:model="payMethod" class="h-11 w-full rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] px-3 text-[15px] text-[var(--ink)] focus:outline-none">
+                        <select wire:model.live="payMethod" class="h-11 w-full rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] px-3 text-[15px] text-[var(--ink)] focus:outline-none">
                             <option value="bank">Transakcijski račun</option>
                             <option value="cash">Gotovina</option>
                             <option value="other">Ostalo</option>
@@ -50,9 +54,19 @@
                         <input type="date" wire:model="payPaidAt" class="h-11 w-full rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] px-3 text-[15px] text-[var(--ink)] focus:outline-none">
                     </div>
                 </div>
+                @if ($payMethod === 'cash')
+                    <div>
+                        <label class="block text-[13px] font-semibold text-[var(--ink2)] mb-1.5">Primio gotovinu *</label>
+                        <input type="text" wire:model="payReceivedBy" placeholder="ime osobe koja je primila"
+                               class="h-11 w-full rounded-[var(--r-control)] border bg-[var(--surface)] px-3 text-[15px] text-[var(--ink)] focus:outline-none"
+                               style="border-color:{{ $errors->has('payReceivedBy') ? 'var(--danger)' : 'var(--line2)' }}">
+                        @error('payReceivedBy') <p class="mt-1.5 text-[13px] font-medium text-[var(--danger)]">{{ $message }}</p> @enderror
+                    </div>
+                @endif
+
                 <div>
                     <label class="block text-[13px] font-semibold text-[var(--ink2)] mb-1.5">Poziv na broj / napomena</label>
-                    <input type="text" wire:model="payBankReference" placeholder="poziv na broj (opcionalno)" class="h-11 w-full rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] px-3 text-[15px] text-[var(--ink)] focus:outline-none">
+                    <input type="text" wire:model="payBankReference" placeholder="bankovna referenca (opcionalno)" class="h-11 w-full rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] px-3 text-[15px] text-[var(--ink)] focus:outline-none">
                 </div>
 
                 @php $openForPay = $charges->reject(fn ($c) => $c->isWrittenOff() || $c->outstandingCents() <= 0); @endphp

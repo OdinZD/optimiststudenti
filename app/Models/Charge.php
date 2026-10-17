@@ -28,7 +28,11 @@ final class Charge extends Model
         'written_off_at',
         'written_off_by',
         'written_off_reason',
+        'nacin_placanja',
         'eracuni_invoice_id',
+        'eracuni_invoice_number',
+        'invoice_status',
+        'last_sent_at',
     ];
 
     public function isWrittenOff(): bool
@@ -105,6 +109,7 @@ final class Charge extends Model
             'amount_cents' => 'integer',
             'due_date' => 'immutable_date',
             'written_off_at' => 'immutable_datetime',
+            'last_sent_at' => 'immutable_datetime',
         ];
     }
 }

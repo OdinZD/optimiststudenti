@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\DeclarationController;
 use App\Livewire\Auth\Login;
+use App\Livewire\ClubBillingSettingsForm;
 use App\Livewire\CompetitionsList;
 use App\Livewire\FeePlansList;
 use App\Livewire\KataTeamsList;
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function (): void {
     // Članarine (modul iza feature flaga). Tarife: samo administratori.
     if (config('features.payments')) {
         Route::get('/clanarine/tarife', FeePlansList::class)->middleware('can:manage-fee-plans')->name('fee-plans');
+        Route::get('/clanarine/postavke', ClubBillingSettingsForm::class)->middleware('can:manage-fee-plans')->name('fee-settings');
     }
 
     Route::post('/logout', function () {

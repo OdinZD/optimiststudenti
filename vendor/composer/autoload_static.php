@@ -543,6 +543,7 @@ class ComposerStaticInitcda2add6397422fb1a2eb5b9207f1575
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\DeclarationController' => __DIR__ . '/../..' . '/app/Http/Controllers/DeclarationController.php',
         'App\\Livewire\\Auth\\Login' => __DIR__ . '/../..' . '/app/Livewire/Auth/Login.php',
+        'App\\Livewire\\ClubBillingSettingsForm' => __DIR__ . '/../..' . '/app/Livewire/ClubBillingSettingsForm.php',
         'App\\Livewire\\CompetitionsList' => __DIR__ . '/../..' . '/app/Livewire/CompetitionsList.php',
         'App\\Livewire\\FeePlansList' => __DIR__ . '/../..' . '/app/Livewire/FeePlansList.php',
         'App\\Livewire\\KataTeamsList' => __DIR__ . '/../..' . '/app/Livewire/KataTeamsList.php',

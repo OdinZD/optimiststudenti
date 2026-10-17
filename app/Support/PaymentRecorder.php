@@ -35,8 +35,9 @@ final class PaymentRecorder
         ?string $note,
         ?int $recordedBy,
         ?array $chargeIds = null,
+        ?string $receivedBy = null,
     ): Payment {
-        return DB::transaction(function () use ($student, $amountCents, $method, $source, $paidAt, $bankReference, $note, $recordedBy, $chargeIds): Payment {
+        return DB::transaction(function () use ($student, $amountCents, $method, $source, $paidAt, $bankReference, $note, $recordedBy, $chargeIds, $receivedBy): Payment {
             $payment = Payment::create([
                 'student_id' => $student->id,
                 'amount_cents' => $amountCents,
@@ -46,6 +47,7 @@ final class PaymentRecorder
                 'bank_reference' => $bankReference,
                 'note' => $note,
                 'recorded_by' => $recordedBy,
+                'received_by' => $receivedBy,
             ]);
 
             $remaining = $amountCents;

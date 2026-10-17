@@ -68,6 +68,9 @@ final class StudentsList extends Component
     #[Url(as: 'prelazi', except: false)]
     public bool $crossingSoonOnly = false;
 
+    #[Url(as: 'bez-nacina', except: false)]
+    public bool $noPaymentMethodOnly = false;
+
     private ?Collection $cache = null;
 
     /** Season start year (September year) for the per-child report, e.g. 2025 = season 2025/2026. */
@@ -92,7 +95,7 @@ final class StudentsList extends Component
 
     public function resetFilters(): void
     {
-        $this->reset(['search', 'ageKey', 'location', 'group', 'belt', 'expiredOnly', 'expiringSoonOnly', 'toRegisterOnly', 'noDeclarationOnly', 'crossingSoonOnly']);
+        $this->reset(['search', 'ageKey', 'location', 'group', 'belt', 'expiredOnly', 'expiringSoonOnly', 'toRegisterOnly', 'noDeclarationOnly', 'crossingSoonOnly', 'noPaymentMethodOnly']);
     }
 
     /** Export the currently filtered students to an .xlsx roster (no OIB, no medical). */
@@ -169,13 +172,20 @@ final class StudentsList extends Component
             || $this->expiringSoonOnly
             || $this->toRegisterOnly
             || $this->noDeclarationOnly
-            || $this->crossingSoonOnly;
+            || $this->crossingSoonOnly
+            || $this->noPaymentMethodOnly;
     }
 
     /** All non-deleted students, loaded once per request. */
     private function allStudents(): Collection
     {
-        return $this->cache ??= Student::with(['location', 'trainingGroup', 'kataTeams', 'declaration'])->get();
+        $with = ['location', 'trainingGroup', 'kataTeams', 'declaration'];
+
+        if (config('features.payments')) {
+            $with[] = 'studentFeePlans'; // za oznaku "Nedostaje način plaćanja"
+        }
+
+        return $this->cache ??= Student::with($with)->get();
     }
 
     private function today(): CarbonImmutable
@@ -230,6 +240,10 @@ final class StudentsList extends Component
         }
 
         if ($this->crossingSoonOnly && $student->crossover_notice === null) {
+            return false;
+        }
+
+        if ($this->noPaymentMethodOnly && ! $student->missingPaymentMethod($this->today())) {
             return false;
         }
 
@@ -323,6 +337,9 @@ final class StudentsList extends Component
             'crossingSoonCount' => $this->allStudents()
                 ->filter(fn (Student $s): bool => $s->crossover_notice !== null)
                 ->count(),
+            'noPaymentMethodCount' => config('features.payments')
+                ? $this->allStudents()->filter(fn (Student $s): bool => $s->missingPaymentMethod($today))->count()
+                : 0,
             'locations' => Location::orderBy('name')->get(),
             'groups' => TrainingGroup::orderBy('name')->get(),
             'belts' => Belt::options(),

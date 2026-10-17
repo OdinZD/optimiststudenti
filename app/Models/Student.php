@@ -11,6 +11,7 @@ use App\Support\Diacritics;
 use App\Support\MedicalStatus;
 use App\Support\Phone;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Database\Factories\StudentFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -83,6 +84,24 @@ final class Student extends Model
     public function declaration(): HasOne
     {
         return $this->hasOne(Declaration::class);
+    }
+
+    /** @return HasMany<StudentFeePlan, $this> */
+    public function studentFeePlans(): HasMany
+    {
+        return $this->hasMany(StudentFeePlan::class);
+    }
+
+    /** True if the student has an active fee-plan assignment without a payment method (Članarine). */
+    public function missingPaymentMethod(?CarbonInterface $today = null): bool
+    {
+        $date = ($today ?? CarbonImmutable::now())->toDateString();
+
+        $plans = $this->relationLoaded('studentFeePlans') ? $this->studentFeePlans : $this->studentFeePlans()->get();
+
+        return $plans->contains(fn (StudentFeePlan $p): bool => $p->nacin_placanja === null
+            && $p->valid_from->toDateString() <= $date
+            && ($p->valid_until === null || $p->valid_until->toDateString() >= $date));
     }
 
     /** @return Attribute<?AgeCategory, never> */

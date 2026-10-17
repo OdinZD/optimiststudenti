@@ -8,6 +8,9 @@
                         <div class="text-[14px] font-semibold text-[var(--ink)] truncate">
                             {{ $a->feePlan->name }}
                             <span class="text-[var(--ink3)] font-normal">· {{ $a->feePlan->type->label() }}</span>
+                            @if ($a->nacin_placanja === null)
+                                <span class="ml-1 inline-block rounded-[var(--r-tag)] px-1.5 text-[11px] font-semibold align-middle" style="background:var(--st-soon-bg);color:var(--st-soon-fg)">Nedostaje način plaćanja</span>
+                            @endif
                         </div>
                         <div class="text-[13px] text-[var(--ink3)] mt-0.5">
                             {{ \App\Support\Money::format($a->effectiveAmountCents()) }}
@@ -15,6 +18,7 @@
                             @elseif ($a->discount_cents !== null) <span class="text-[var(--acc)]">(−{{ \App\Support\Money::format($a->discount_cents) }})</span>
                             @endif
                             · {{ $a->valid_from->format('d.m.Y.') }} – {{ $a->valid_until?->format('d.m.Y.') ?? 'dalje' }}
+                            @if ($a->nacin_placanja) · {{ $a->nacin_placanja === 'racun_email' ? 'Račun e-mailom' : 'Gotovina' }} @endif
                             @if ($a->payer_name) · {{ $a->payer_name }} @endif
                         </div>
                     </div>
@@ -70,8 +74,27 @@
             @endif
         </div>
 
+        <div class="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr))]">
+            <div>
+                <label class="block text-[13px] font-semibold text-[var(--ink2)] mb-1.5">Način plaćanja</label>
+                <select wire:model.live="nacinPlacanja"
+                        class="h-11 w-full rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] px-3 text-[15px] text-[var(--ink)] focus:outline-none">
+                    <option value="">— nije postavljeno —</option>
+                    <option value="racun_email">Račun e-mailom</option>
+                    <option value="gotovina">Gotovina</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[13px] font-semibold text-[var(--ink2)] mb-1.5">E-mail platitelja{{ $nacinPlacanja === 'racun_email' ? ' *' : '' }}</label>
+                <input type="email" wire:model.blur="payerEmail" placeholder="e-mail za račun"
+                       class="h-11 w-full rounded-[var(--r-control)] border bg-[var(--surface)] px-3 text-[15px] text-[var(--ink)] focus:outline-none"
+                       style="border-color:{{ $errors->has('payerEmail') ? 'var(--danger)' : 'var(--line2)' }}">
+                @error('payerEmail') <p class="mt-1.5 text-[13px] font-medium text-[var(--danger)]">{{ $message }}</p> @enderror
+            </div>
+        </div>
+
         <div>
-            <label class="block text-[13px] font-semibold text-[var(--ink2)] mb-1.5">Platitelj</label>
+            <label class="block text-[13px] font-semibold text-[var(--ink2)] mb-1.5">Platitelj (ime)</label>
             <input type="text" wire:model="payerName" placeholder="Ime platitelja"
                    class="h-11 w-full rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] px-3 text-[15px] text-[var(--ink)] focus:outline-none">
         </div>

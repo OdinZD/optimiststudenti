@@ -18,6 +18,7 @@ return array(
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
     'App\\Http\\Controllers\\DeclarationController' => $baseDir . '/app/Http/Controllers/DeclarationController.php',
     'App\\Livewire\\Auth\\Login' => $baseDir . '/app/Livewire/Auth/Login.php',
+    'App\\Livewire\\ClubBillingSettingsForm' => $baseDir . '/app/Livewire/ClubBillingSettingsForm.php',
     'App\\Livewire\\CompetitionsList' => $baseDir . '/app/Livewire/CompetitionsList.php',
     'App\\Livewire\\FeePlansList' => $baseDir . '/app/Livewire/FeePlansList.php',
     'App\\Livewire\\KataTeamsList' => $baseDir . '/app/Livewire/KataTeamsList.php',

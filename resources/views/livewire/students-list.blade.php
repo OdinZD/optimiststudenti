@@ -137,6 +137,18 @@
             Prelazi kategoriju <span @class(['opacity-80' => $crossingSoonOnly, 'text-[var(--ink3)]' => ! $crossingSoonOnly])>{{ $crossingSoonCount }}</span>
         </button>
 
+        @if (config('features.payments'))
+            <button type="button" wire:click="$toggle('noPaymentMethodOnly')" aria-pressed="{{ $noPaymentMethodOnly ? 'true' : 'false' }}"
+                    class="h-11 inline-flex items-center gap-2 rounded-[var(--r-pill)] px-3.5 text-[14px] font-semibold transition"
+                    @style([
+                        'background:var(--acc);color:#fff' => $noPaymentMethodOnly,
+                        'background:var(--surface);color:var(--ink);border:1px solid var(--line2)' => ! $noPaymentMethodOnly,
+                    ])>
+                <span class="w-2 h-2 rounded-full" style="background:var(--dot-register)" aria-hidden="true"></span>
+                Nedostaje način plaćanja <span @class(['opacity-80' => $noPaymentMethodOnly, 'text-[var(--ink3)]' => ! $noPaymentMethodOnly])>{{ $noPaymentMethodCount }}</span>
+            </button>
+        @endif
+
         @if ($filtersActive)
             <button type="button" wire:click="resetFilters"
                     class="h-11 px-2 text-[14px] font-semibold text-[var(--acc)] transition hover:underline">

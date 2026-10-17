@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Models\Charge;
-use App\Models\ClubBillingSettings;
 use App\Models\FeePlan;
 use App\Models\Payment;
 use App\Models\Student;
@@ -60,6 +59,8 @@ final class StudentCharges extends Component
     /** @var list<int> */
     public array $paySelected = [];
 
+    public string $payReceivedBy = ''; // tko je primio gotovinu (obavezno za cash)
+
     // Otpis (manage-payments)
     public ?int $writeOffChargeId = null;
 
@@ -95,8 +96,6 @@ final class StudentCharges extends Component
             'mcDueDate' => ['nullable', 'date'],
         ], attributes: ['mcFeePlanId' => 'tarifa', 'mcPeriod' => 'mjesec', 'mcAmount' => 'iznos']);
 
-        $settings = ClubBillingSettings::current();
-
         try {
             $charge = Charge::create([
                 'student_id' => $this->studentId,
@@ -104,7 +103,7 @@ final class StudentCharges extends Component
                 'period' => $this->mcPeriod,
                 'amount_cents' => Money::parse($this->mcAmount),
                 'due_date' => $this->mcDueDate ?: null,
-                'reference' => BillingReference::for($this->studentId, $this->mcPeriod, $settings?->model),
+                'reference' => BillingReference::for($this->studentId, $this->mcPeriod, null), // interna oznaka {id}-{GGGGMM}
             ]);
         } catch (UniqueConstraintViolationException) {
             $this->addError('mcFeePlanId', 'Za tu tarifu i mjesec zaduženje već postoji.');
@@ -131,9 +130,17 @@ final class StudentCharges extends Component
         $this->showPayment = true;
     }
 
+    /** Brza gotovinska uplata: otvori formu već postavljenu na gotovinu. */
+    public function openCash(): void
+    {
+        $this->openPayment();
+        $this->payMethod = 'cash';
+        $this->payReceivedBy = (string) (Auth::user()?->name ?? '');
+    }
+
     public function cancelPayment(): void
     {
-        $this->reset(['showPayment', 'paySubmitted', 'payAmount', 'payBankReference', 'payNote', 'paySelected']);
+        $this->reset(['showPayment', 'paySubmitted', 'payAmount', 'payBankReference', 'payNote', 'paySelected', 'payReceivedBy']);
         $this->payMethod = 'bank';
     }
 
@@ -149,7 +156,8 @@ final class StudentCharges extends Component
             'payNote' => ['nullable', 'string', 'max:255'],
             'paySelected' => ['array'],
             'paySelected.*' => ['integer'],
-        ], attributes: ['payAmount' => 'iznos', 'payPaidAt' => 'datum']);
+            'payReceivedBy' => ['nullable', 'string', 'max:150', 'required_if:payMethod,cash'],
+        ], attributes: ['payAmount' => 'iznos', 'payPaidAt' => 'datum', 'payReceivedBy' => 'primatelj']);
 
         PaymentRecorder::record(
             Student::findOrFail($this->studentId),
@@ -161,6 +169,7 @@ final class StudentCharges extends Component
             $this->payNote ?: null,
             Auth::id(),
             $this->paySelected !== [] ? array_map('intval', $this->paySelected) : null,
+            $this->payReceivedBy ?: null,
         );
 
         $this->cancelPayment();

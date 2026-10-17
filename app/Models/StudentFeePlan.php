@@ -22,6 +22,8 @@ final class StudentFeePlan extends Model
         'valid_from',
         'valid_until',
         'payer_name',
+        'payer_email',
+        'nacin_placanja',
         'created_by',
     ];
 

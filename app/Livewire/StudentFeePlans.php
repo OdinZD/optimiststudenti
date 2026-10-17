@@ -39,11 +39,16 @@ final class StudentFeePlans extends Component
 
     public string $validUntil = '';
 
+    public string $nacinPlacanja = '';
+
+    public string $payerEmail = '';
+
     public function mount(int $studentId): void
     {
         $this->authorizeAssign();
         $this->studentId = $studentId;
         $this->payerName = $this->defaultPayer();
+        $this->payerEmail = $this->defaultPayerEmail();
         $this->validFrom = $this->defaultValidFrom();
     }
 
@@ -61,6 +66,8 @@ final class StudentFeePlans extends Component
             'payerName' => ['nullable', 'string', 'max:150'],
             'validFrom' => ['required', 'date'],
             'validUntil' => ['nullable', 'date', 'after_or_equal:validFrom'],
+            'nacinPlacanja' => ['nullable', Rule::in(['racun_email', 'gotovina'])],
+            'payerEmail' => ['nullable', 'email', 'max:255', 'required_if:nacinPlacanja,racun_email'],
         ];
     }
 
@@ -70,6 +77,8 @@ final class StudentFeePlans extends Component
             'feePlanId.required' => 'Odaberi tarifu',
             'validFrom.required' => 'Obavezno polje',
             'validUntil.after_or_equal' => '„Vrijedi do” ne može biti prije „Vrijedi od”',
+            'payerEmail.required_if' => 'E-mail platitelja je obavezan za plaćanje računom',
+            'payerEmail.email' => 'Neispravan e-mail',
         ];
     }
 
@@ -93,6 +102,8 @@ final class StudentFeePlans extends Component
             default => '',
         };
         $this->payerName = $a->payer_name ?? '';
+        $this->payerEmail = $a->payer_email ?? '';
+        $this->nacinPlacanja = $a->nacin_placanja ?? '';
         $this->validFrom = $a->valid_from->format('Y-m-d');
         $this->validUntil = $a->valid_until?->format('Y-m-d') ?? '';
         $this->submitted = false;
@@ -128,6 +139,8 @@ final class StudentFeePlans extends Component
             'valid_from' => $this->validFrom,
             'valid_until' => $this->validUntil ?: null,
             'payer_name' => $this->payerName !== '' ? $this->payerName : ($this->defaultPayer() ?: null),
+            'payer_email' => $this->payerEmail ?: null,
+            'nacin_placanja' => $this->nacinPlacanja ?: null,
             'created_by' => Auth::id(),
         ];
 
@@ -172,6 +185,11 @@ final class StudentFeePlans extends Component
         return (string) (Student::find($this->studentId)?->parent_name ?? '');
     }
 
+    private function defaultPayerEmail(): string
+    {
+        return (string) (Student::find($this->studentId)?->parent_email ?? '');
+    }
+
     /** Prijedlog: 1. dan tekućeg mjeseca (korisnik ga može promijeniti). */
     private function defaultValidFrom(): string
     {
@@ -185,9 +203,10 @@ final class StudentFeePlans extends Component
 
     private function resetForm(): void
     {
-        $this->reset(['editingId', 'submitted', 'feePlanId', 'discountType', 'discountValue', 'validFrom', 'validUntil']);
+        $this->reset(['editingId', 'submitted', 'feePlanId', 'discountType', 'discountValue', 'validFrom', 'validUntil', 'nacinPlacanja', 'payerEmail']);
         $this->discountType = 'none';
         $this->payerName = $this->defaultPayer();
+        $this->payerEmail = $this->defaultPayerEmail();
         $this->validFrom = $this->defaultValidFrom();
     }
 

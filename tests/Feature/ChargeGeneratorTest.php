@@ -107,4 +107,15 @@ final class ChargeGeneratorTest extends TestCase
 
         $this->assertSame(0, $result['created']);
     }
+
+    public function test_copies_payment_method_from_assignment(): void
+    {
+        $plan = FeePlan::create(['name' => 'M', 'amount_cents' => 2500, 'type' => 'monthly', 'active' => true]);
+        $student = Student::create(['last_name' => 'A', 'first_name' => 'B']);
+        StudentFeePlan::create(['student_id' => $student->id, 'fee_plan_id' => $plan->id, 'valid_from' => '2026-09-01', 'nacin_placanja' => 'racun_email']);
+
+        ChargeGenerator::generate('2026-10');
+
+        $this->assertSame('racun_email', Charge::firstWhere('student_id', $student->id)->nacin_placanja);
+    }
 }
