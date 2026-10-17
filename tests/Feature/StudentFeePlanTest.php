@@ -45,6 +45,22 @@ final class StudentFeePlanTest extends TestCase
         $this->assertSame(2000, $a->effectiveAmountCents()); // 2500 − 20%
     }
 
+    public function test_trener_may_assign_a_tariff(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => Role::Trener]));
+        $plan = FeePlan::create(['name' => 'M', 'amount_cents' => 2500, 'type' => 'monthly', 'active' => true]);
+        $student = Student::create(['last_name' => 'A', 'first_name' => 'B']);
+
+        Livewire::test(StudentFeePlans::class, ['studentId' => $student->id])
+            ->set('feePlanId', (string) $plan->id)
+            ->set('discountType', 'none')
+            ->set('validFrom', '2026-09-01')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('student_fee_plans', ['student_id' => $student->id, 'fee_plan_id' => $plan->id]);
+    }
+
     public function test_fixed_discount_is_stored_in_cents(): void
     {
         $plan = FeePlan::create(['name' => 'X', 'amount_cents' => 2500, 'type' => 'monthly', 'active' => true]);

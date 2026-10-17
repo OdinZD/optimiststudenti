@@ -27,6 +27,13 @@ final class FeePlansTest extends TestCase
         $this->assertFalse(Gate::forUser(User::factory()->create(['role' => Role::Trener]))->allows('manage-fee-plans'));
     }
 
+    public function test_assign_fee_plan_gate_allows_admin_and_trener_not_cashier(): void
+    {
+        $this->assertTrue(Gate::forUser(User::factory()->create(['role' => Role::Admin]))->allows('assign-fee-plan'));
+        $this->assertTrue(Gate::forUser(User::factory()->create(['role' => Role::Trener]))->allows('assign-fee-plan'));
+        $this->assertFalse(Gate::forUser(User::factory()->create(['role' => Role::Blagajnik]))->allows('assign-fee-plan'));
+    }
+
     public function test_admin_can_create_edit_and_delete_a_tariff(): void
     {
         $this->actingAs(User::factory()->create(['role' => Role::Admin]));

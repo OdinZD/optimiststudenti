@@ -11,6 +11,7 @@ use App\Models\StudentFeePlan;
 use App\Support\Auditer;
 use App\Support\Money;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -40,8 +41,14 @@ final class StudentFeePlans extends Component
 
     public function mount(int $studentId): void
     {
+        $this->authorizeAssign();
         $this->studentId = $studentId;
         $this->payerName = $this->defaultPayer();
+    }
+
+    private function authorizeAssign(): void
+    {
+        abort_unless(Gate::allows('assign-fee-plan'), 403);
     }
 
     protected function rules(): array
@@ -74,6 +81,7 @@ final class StudentFeePlans extends Component
 
     public function editAssignment(int $id): void
     {
+        $this->authorizeAssign();
         $a = $this->owned($id);
         $this->editingId = $a->id;
         $this->feePlanId = (string) $a->fee_plan_id;
@@ -96,6 +104,7 @@ final class StudentFeePlans extends Component
 
     public function save(): void
     {
+        $this->authorizeAssign();
         $this->submitted = true;
         $this->validate();
 
@@ -135,6 +144,7 @@ final class StudentFeePlans extends Component
 
     public function deleteAssignment(int $id): void
     {
+        $this->authorizeAssign();
         $a = $this->owned($id);
         Auditer::log('student_fee_plan.removed', $a, $a->only($a->getFillable()), null);
         $a->delete();
