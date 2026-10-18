@@ -86,7 +86,15 @@
                            class="h-11 w-full rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] px-3 text-[15px] text-[var(--ink)] focus:outline-none">
                 </div>
             @endforeach
-            <p class="text-[12px] text-[var(--ink3)]">Vjerodajnice se spremaju šifrirano i nikad se ne prikazuju u cijelosti. Gumb „Provjeri vezu" dolazi s eRačuni klijentom.</p>
+            <div class="flex items-center gap-3 flex-wrap">
+                <button type="button" wire:click="testConnection" wire:loading.attr="disabled"
+                        class="h-10 px-4 rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] text-[14px] font-semibold text-[var(--ink)] transition hover:bg-[var(--bg)] disabled:opacity-60">
+                    <span wire:loading.remove wire:target="testConnection">Provjeri vezu</span>
+                    <span wire:loading wire:target="testConnection">Provjeravam…</span>
+                </button>
+                <p class="text-[12px] text-[var(--ink3)]">Šalje samo čitanje (jedan upit partnera). Prvo spremi postavke.</p>
+            </div>
+            <p class="text-[12px] text-[var(--ink3)]">Vjerodajnice se spremaju šifrirano i nikad se ne prikazuju u cijelosti.</p>
         </section>
 
         {{-- Nekorišteno (HUB) --}}

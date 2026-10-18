@@ -580,6 +580,7 @@ class ComposerStaticInitcda2add6397422fb1a2eb5b9207f1575
         'App\\Services\\Eracuni\\EracuniClient' => __DIR__ . '/../..' . '/app/Services/Eracuni/EracuniClient.php',
         'App\\Services\\Eracuni\\EracuniException' => __DIR__ . '/../..' . '/app/Services/Eracuni/EracuniException.php',
         'App\\Services\\Eracuni\\EracuniPartner' => __DIR__ . '/../..' . '/app/Services/Eracuni/EracuniPartner.php',
+        'App\\Services\\Eracuni\\HttpEracuniClient' => __DIR__ . '/../..' . '/app/Services/Eracuni/HttpEracuniClient.php',
         'App\\Services\\Eracuni\\MatchProposal' => __DIR__ . '/../..' . '/app/Services/Eracuni/MatchProposal.php',
         'App\\Services\\Eracuni\\MockEracuniClient' => __DIR__ . '/../..' . '/app/Services/Eracuni/MockEracuniClient.php',
         'App\\Services\\Eracuni\\PartnerMatcher' => __DIR__ . '/../..' . '/app/Services/Eracuni/PartnerMatcher.php',

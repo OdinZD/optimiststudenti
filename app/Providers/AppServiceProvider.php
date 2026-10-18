@@ -5,12 +5,12 @@ namespace App\Providers;
 use App\Enums\Role;
 use App\Models\User;
 use App\Services\Eracuni\EracuniClient;
+use App\Services\Eracuni\HttpEracuniClient;
 use App\Services\Eracuni\MockEracuniClient;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
-use RuntimeException;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,10 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // eRačuni klijent. Zasad uvijek mock (bez ijednog pravog poziva). Kad stigne API
-        // pristup → dodati HttpEracuniClient i prebaciti ERACUNI_DRIVER=http (bez dirania ostatka).
+        // eRačuni klijent: ERACUNI_DRIVER=mock (default, bez pravih poziva) | http (pravi, samo čitanje
+        // dok ERACUNI_ALLOW_WRITE nije uključen).
         $this->app->singleton(EracuniClient::class, static fn (): EracuniClient => match (config('eracuni.driver', 'mock')) {
-            'http' => throw new RuntimeException('eRačuni HTTP klijent još nije konfiguriran (vidi plan: Faza 4b).'),
+            'http' => new HttpEracuniClient,
             default => new MockEracuniClient,
         });
     }

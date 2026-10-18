@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Models\ClubBillingSettings;
+use App\Services\Eracuni\EracuniClient;
+use App\Services\Eracuni\EracuniException;
 use App\Support\Auditer;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
@@ -160,6 +162,24 @@ final class ClubBillingSettingsForm extends Component
         $this->endpointSet = $fresh->eracuni_endpoint !== null;
 
         $this->dispatch('toast', message: 'Postavke spremljene');
+    }
+
+    /** Read-only connectivity check: one PartnerList that matches nothing (validates credentials + endpoint). */
+    public function testConnection(EracuniClient $client): void
+    {
+        abort_unless(Gate::allows('manage-fee-plans'), 403);
+
+        $driver = (string) config('eracuni.driver', 'mock');
+
+        try {
+            $client->partnerList(['partnerType' => 'buyer', 'searchKey' => '__optimist_ping__']);
+        } catch (EracuniException $e) {
+            $this->dispatch('toast', message: 'Veza nije uspjela: '.$e->getMessage());
+
+            return;
+        }
+
+        $this->dispatch('toast', message: $driver === 'http' ? 'Veza s eRačunima radi.' : 'Veza OK (MOCK klijent — nije pravi poziv).');
     }
 
     /** @return list<int>|null */

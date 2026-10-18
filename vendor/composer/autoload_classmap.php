@@ -55,6 +55,7 @@ return array(
     'App\\Services\\Eracuni\\EracuniClient' => $baseDir . '/app/Services/Eracuni/EracuniClient.php',
     'App\\Services\\Eracuni\\EracuniException' => $baseDir . '/app/Services/Eracuni/EracuniException.php',
     'App\\Services\\Eracuni\\EracuniPartner' => $baseDir . '/app/Services/Eracuni/EracuniPartner.php',
+    'App\\Services\\Eracuni\\HttpEracuniClient' => $baseDir . '/app/Services/Eracuni/HttpEracuniClient.php',
     'App\\Services\\Eracuni\\MatchProposal' => $baseDir . '/app/Services/Eracuni/MatchProposal.php',
     'App\\Services\\Eracuni\\MockEracuniClient' => $baseDir . '/app/Services/Eracuni/MockEracuniClient.php',
     'App\\Services\\Eracuni\\PartnerMatcher' => $baseDir . '/app/Services/Eracuni/PartnerMatcher.php',
