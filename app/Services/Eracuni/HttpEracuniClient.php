@@ -111,7 +111,10 @@ final class HttpEracuniClient implements EracuniClient
             }
 
             if (! $response->successful()) {
-                throw new EracuniException('eRačuni HTTP '.$response->status().'.');
+                // Odgovor je u poruci (a time i u logu) da se vidi što je eRačuni stvarno vratio; bez vjerodajnica jer ih ne ponavlja.
+                $snippet = trim((string) preg_replace('/\s+/', ' ', strip_tags($response->body())));
+
+                throw new EracuniException('eRačuni HTTP '.$response->status().($snippet !== '' ? ': '.mb_substr($snippet, 0, 300) : ' (prazan odgovor).'));
             }
 
             if (! is_array($body)) {
