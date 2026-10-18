@@ -84,6 +84,23 @@ final class HttpEracuniClientTest extends TestCase
         $this->assertFalse(EracuniApiLog::query()->firstOrFail()->ok);
     }
 
+    public function test_api_error_body_on_http_500_is_surfaced_and_logged(): void
+    {
+        $this->settings();
+        Http::fake(['*' => Http::response(['response' => ['status' => 'error', 'description' => 'Invalid web services token supplied']], 500)]);
+
+        try {
+            (new HttpEracuniClient)->partnerList();
+            $this->fail('Očekivana EracuniException.');
+        } catch (EracuniException $e) {
+            $this->assertStringContainsString('Invalid web services token supplied', $e->getMessage());
+        }
+
+        $log = EracuniApiLog::query()->firstOrFail();
+        $this->assertFalse($log->ok);
+        $this->assertStringContainsString('Invalid web services token supplied', (string) $log->error);
+    }
+
     public function test_write_methods_are_blocked_unless_allowed(): void
     {
         $this->settings();

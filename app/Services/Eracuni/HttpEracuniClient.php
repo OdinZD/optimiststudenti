@@ -6,6 +6,7 @@ namespace App\Services\Eracuni;
 
 use App\Models\ClubBillingSettings;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 
 /**
@@ -97,21 +98,24 @@ final class HttpEracuniClient implements EracuniClient
                     ->post($endpoint, $envelope);
             } catch (ConnectionException $e) {
                 throw new EracuniException('eRačuni nije dostupan: '.$e->getMessage(), 0, $e);
+            } catch (RequestException $e) {
+                $response = $e->response;
+            }
+
+            $body = $response->json();
+
+            // eRačuni vraća aplikacijske greške kao HTTP 500 s tijelom
+            // {"response": {"status": "error", "description": "..."}} — opis je ono što treba vidjeti.
+            if (is_array($body) && ($body['response']['status'] ?? null) === 'error') {
+                throw new EracuniException('eRačuni greška: '.(string) ($body['response']['description'] ?? 'nepoznata greška'));
             }
 
             if (! $response->successful()) {
                 throw new EracuniException('eRačuni HTTP '.$response->status().'.');
             }
 
-            $body = $response->json();
-
             if (! is_array($body)) {
                 throw new EracuniException('eRačuni je vratio odgovor koji nije JSON.');
-            }
-
-            // Oblik poruke o grešci provjeriti u API konzoli; dok nije potvrđen hvata se uobičajeni ključ.
-            if (! empty($body['error']) || ! empty($body['errorMessage'])) {
-                throw new EracuniException('eRačuni greška: '.(string) ($body['errorMessage'] ?? $body['error']));
             }
 
             return $body;
@@ -127,6 +131,8 @@ final class HttpEracuniClient implements EracuniClient
      */
     private function rows(array $body): array
     {
+        $body = is_array($body['response'] ?? null) ? $body['response'] : $body;
+
         if (array_is_list($body)) {
             return $body;
         }
