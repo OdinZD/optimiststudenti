@@ -6,6 +6,7 @@ use App\Http\Controllers\DeclarationController;
 use App\Livewire\Auth\Login;
 use App\Livewire\ClubBillingSettingsForm;
 use App\Livewire\CompetitionsList;
+use App\Livewire\EracuniPartnerLinks;
 use App\Livewire\FeePlansList;
 use App\Livewire\KataTeamsList;
 use App\Livewire\StudentsList;
@@ -28,6 +29,7 @@ Route::middleware('auth')->group(function (): void {
     if (config('features.payments')) {
         Route::get('/clanarine/tarife', FeePlansList::class)->middleware('can:manage-fee-plans')->name('fee-plans');
         Route::get('/clanarine/postavke', ClubBillingSettingsForm::class)->middleware('can:manage-fee-plans')->name('fee-settings');
+        Route::get('/clanarine/partneri', EracuniPartnerLinks::class)->middleware('can:manage-fee-plans')->name('fee-partners');
     }
 
     Route::post('/logout', function () {

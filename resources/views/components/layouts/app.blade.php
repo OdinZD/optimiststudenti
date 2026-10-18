@@ -19,6 +19,7 @@
             ];
             if (config('features.payments') && auth()->user()?->can('manage-fee-plans')) {
                 $navItems[] = ['route' => 'fee-plans', 'label' => 'Članarine'];
+                $navItems[] = ['route' => 'fee-partners', 'label' => 'Partneri'];
                 $navItems[] = ['route' => 'fee-settings', 'label' => 'Postavke'];
             }
         @endphp
