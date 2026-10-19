@@ -146,8 +146,8 @@
     </div>
 
     {{-- Desktop table --}}
-    <div class="mt-4 bg-[var(--surface)] rounded-[var(--r-card)] border border-[var(--line)] overflow-hidden max-[760px]:hidden">
-        <table class="w-full border-collapse">
+    <div class="mt-4 bg-[var(--surface)] rounded-[var(--r-card)] border border-[var(--line)] overflow-x-auto max-[760px]:hidden">
+        <table class="w-full min-w-[820px] border-collapse">
             <thead>
                 <tr class="text-left text-[12px] font-semibold uppercase tracking-[0.05em] text-[var(--ink3)]">
                     <th class="px-4 py-3 font-semibold" style="width:250px">Polaznik</th>
