@@ -20,6 +20,6 @@ return [
 
     'allow_write' => (bool) env('ERACUNI_ALLOW_WRITE', false),
 
-    'timeout' => (int) env('ERACUNI_TIMEOUT', 20),
+    'timeout' => (int) env('ERACUNI_TIMEOUT', 60),
 
 ];

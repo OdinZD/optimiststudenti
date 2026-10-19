@@ -92,7 +92,11 @@ final class HttpEracuniClient implements EracuniClient
 
         return EracuniApiLogger::record($method, $envelope, function () use ($endpoint, $envelope): array {
             try {
-                $response = Http::timeout((int) config('eracuni.timeout', 20))
+                // eRačuni šalje odgovor s neispravnim zaglavljem "Content-Encoding: 8-bit" koje cURL ne zna
+                // dekodirati (cURL error 61 → izgledalo je kao prazan 500). Zato tražimo odgovor bez kompresije.
+                $response = Http::timeout((int) config('eracuni.timeout', 60))
+                    ->withOptions(['decode_content' => false])
+                    ->withHeaders(['Accept-Encoding' => 'identity'])
                     ->acceptJson()
                     ->asJson()
                     ->post($endpoint, $envelope);

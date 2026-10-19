@@ -54,6 +54,17 @@ final class HttpEracuniClientTest extends TestCase
         });
     }
 
+    public function test_requests_uncompressed_response_and_reads_result_rows(): void
+    {
+        $this->settings();
+        Http::fake(['*' => Http::response(['response' => ['status' => 'ok', 'result' => [['documentID' => '60:1']]]])]);
+
+        $rows = (new HttpEracuniClient)->salesInvoiceList();
+
+        $this->assertSame('60:1', $rows[0]['documentID']);
+        Http::assertSent(fn (Request $r): bool => $r->header('Accept-Encoding') === ['identity']);
+    }
+
     public function test_log_contains_no_credentials(): void
     {
         $this->settings();
