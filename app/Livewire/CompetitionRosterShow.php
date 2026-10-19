@@ -324,7 +324,7 @@ final class CompetitionRosterShow extends Component
     /** @return Collection<int, Student> */
     private function allStudents(): Collection
     {
-        return $this->studentCache ??= Student::query()->get();
+        return $this->studentCache ??= Student::query()->with('trainingGroups')->get();
     }
 
     private function bySurname(Collection $students): Collection
@@ -350,7 +350,7 @@ final class CompetitionRosterShow extends Component
             }
 
             return match ($kind) {
-                'g' => (string) $s->training_group_id === $value,
+                'g' => $s->trainingGroups->contains('id', (int) $value),
                 'a' => AgeCategory::for($s->birth_date, $today)?->key === $value,
                 default => false,
             };

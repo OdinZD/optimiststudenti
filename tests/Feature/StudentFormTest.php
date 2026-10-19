@@ -145,11 +145,9 @@ final class StudentFormTest extends TestCase
 
     public function test_create_defaults(): void
     {
-        $osStanovi = (string) Location::where('slug', 'os-stanovi')->value('id');
-
         Livewire::test(StudentForm::class)
             ->call('openCreate')
-            ->assertSet('locationId', $osStanovi)
+            ->assertSet('trainingGroupIds', []) // location is no longer a form field; slots derive from groups
             ->assertSet('nextGradeStatus', 'none');
     }
 

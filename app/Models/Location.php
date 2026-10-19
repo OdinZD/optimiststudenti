@@ -15,4 +15,10 @@ final class Location extends Model
     {
         return $this->hasMany(Student::class);
     }
+
+    /** @return HasMany<TrainingSlot, $this> */
+    public function slots(): HasMany
+    {
+        return $this->hasMany(TrainingSlot::class);
+    }
 }

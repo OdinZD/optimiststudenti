@@ -35,7 +35,14 @@ final class CompetitionRostersTest extends TestCase
 
     private function child(string $last, string $first, ?string $birth = '2015-05-05', ?int $group = null): Student
     {
-        return Student::create(['last_name' => $last, 'first_name' => $first, 'birth_date' => $birth, 'training_group_id' => $group]);
+        $student = Student::create(['last_name' => $last, 'first_name' => $first, 'birth_date' => $birth]);
+
+        // Group membership is a many-to-many (student_training_group), no longer a column on students.
+        if ($group !== null) {
+            $student->trainingGroups()->attach($group);
+        }
+
+        return $student;
     }
 
     public function test_pages_render(): void

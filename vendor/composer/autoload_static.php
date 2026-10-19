@@ -557,6 +557,7 @@ class ComposerStaticInitcda2add6397422fb1a2eb5b9207f1575
         'App\\Models\\Location' => __DIR__ . '/../..' . '/app/Models/Location.php',
         'App\\Models\\Student' => __DIR__ . '/../..' . '/app/Models/Student.php',
         'App\\Models\\TrainingGroup' => __DIR__ . '/../..' . '/app/Models/TrainingGroup.php',
+        'App\\Models\\TrainingSlot' => __DIR__ . '/../..' . '/app/Models/TrainingSlot.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Rules\\Oib' => __DIR__ . '/../..' . '/app/Rules/Oib.php',

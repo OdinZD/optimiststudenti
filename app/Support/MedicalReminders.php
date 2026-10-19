@@ -52,7 +52,7 @@ final class MedicalReminders
                 return [
                     $s->last_name,
                     $s->first_name,
-                    $s->location?->name ?? '—',
+                    $s->training_locations->pluck('name')->implode(' · ') ?: '—',
                     $s->medical_valid_until?->format('d.m.Y.') ?? '',
                     $r['status']->label(),
                     self::rok($r['status'], $r['days']),
