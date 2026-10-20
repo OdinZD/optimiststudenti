@@ -4,7 +4,7 @@ Kratki zapisi važnih odluka u projektu (predložak: Status, Datum, Context, Dec
 
 | # | Odluka | Razlog zapisan? |
 |---|---|---|
-| [0001](0001-livewire-class-komponente-i-tailwind.md) | Livewire 4 class komponente + Tailwind v4 | ne |
+| [0001](0001-livewire-class-komponente-i-tailwind.md) | Livewire 4 class komponente + Tailwind v4 | da (vlasnik) |
 | [0002](0002-mariadb-na-produkciji.md) | MariaDB na produkciji | da (vlasnik) |
 | [0003](0003-izracunato-ne-spremljeno.md) | Izvedeno se računa, ne sprema | zaključak iz koda |
 | [0004](0004-novac-u-centima-bez-brisanja.md) | Novac u centima, storno, audit | ne |
