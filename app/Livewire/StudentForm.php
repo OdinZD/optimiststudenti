@@ -6,9 +6,9 @@ namespace App\Livewire;
 
 use App\Enums\Belt;
 use App\Models\KataTeam;
-use App\Models\Location;
 use App\Models\Student;
 use App\Models\TrainingGroup;
+use App\Models\TrainingSlot;
 use App\Rules\Oib;
 use App\Support\AgeCategory;
 use App\Support\MedicalStatus;
@@ -35,10 +35,6 @@ final class StudentForm extends Component
 
     public string $oib = '';
 
-    public string $locationId = '';
-
-    public string $trainingGroupId = '';
-
     public string $belt = '';
 
     public string $nextGradeStatus = 'none';
@@ -62,6 +58,9 @@ final class StudentForm extends Component
     /** Kata team ids the student belongs to (many-to-many; kept as strings for checkbox binding). */
     public array $kataTeamIds = [];
 
+    /** Training group ids (many-to-many; strings for checkbox binding). Slots/locations are derived from these. */
+    public array $trainingGroupIds = [];
+
     protected function rules(): array
     {
         return [
@@ -69,8 +68,8 @@ final class StudentForm extends Component
             'firstName' => ['required', 'string', 'max:100'],
             'birthDate' => ['nullable', 'date', 'after_or_equal:1900-01-01', 'before_or_equal:today'],
             'oib' => ['nullable', new Oib, Rule::unique('students', 'oib')->ignore($this->studentId)],
-            'locationId' => ['nullable', 'exists:locations,id'],
-            'trainingGroupId' => ['nullable', 'exists:training_groups,id'],
+            'trainingGroupIds' => ['array'],
+            'trainingGroupIds.*' => ['exists:training_groups,id'],
             'belt' => ['nullable', Rule::in(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])],
             'nextGradeStatus' => [Rule::in(['none', 'to_register', 'registered'])],
             'nextGradeKyu' => [
@@ -104,13 +103,10 @@ final class StudentForm extends Component
     }
 
     #[On('new-student')]
-    public function openCreate(?string $locationSlug = null): void
+    public function openCreate(): void
     {
         $this->resetForm();
         $this->studentId = null;
-
-        $slug = $locationSlug !== null && $locationSlug !== '' ? $locationSlug : 'os-stanovi';
-        $this->locationId = (string) (Location::where('slug', $slug)->value('id') ?? '');
 
         $this->open = true;
     }
@@ -126,8 +122,6 @@ final class StudentForm extends Component
         $this->firstName = $student->first_name;
         $this->birthDate = $student->birth_date?->format('Y-m-d') ?? '';
         $this->oib = $student->oib ?? '';
-        $this->locationId = (string) ($student->location_id ?? '');
-        $this->trainingGroupId = (string) ($student->training_group_id ?? '');
         $this->belt = $student->belt_kyu !== null ? (string) $student->belt_kyu->value : '';
         $this->nextGradeStatus = $student->next_grade_status->value;
         $this->nextGradeKyu = $student->next_grade_kyu !== null ? (string) $student->next_grade_kyu : '';
@@ -139,6 +133,7 @@ final class StudentForm extends Component
         $this->note = $student->note ?? '';
         $this->flagT = $student->flag_t;
         $this->kataTeamIds = $student->kataTeams->pluck('id')->sort()->values()->map(fn (int $id): string => (string) $id)->all();
+        $this->trainingGroupIds = $student->trainingGroups->pluck('id')->sort()->values()->map(fn (int $id): string => (string) $id)->all();
 
         $this->open = true;
     }
@@ -197,8 +192,6 @@ final class StudentForm extends Component
             'first_name' => $this->firstName,
             'birth_date' => $this->birthDate ?: null,
             'oib' => $this->oib ?: null,
-            'location_id' => $this->locationId ?: null,
-            'training_group_id' => $this->trainingGroupId ?: null,
             'belt_kyu' => $this->belt === '' ? null : (int) $this->belt,
             'next_grade_status' => $this->nextGradeStatus,
             'next_grade_kyu' => $this->nextGradeStatus === 'registered' ? (int) $this->nextGradeKyu : null,
@@ -216,6 +209,7 @@ final class StudentForm extends Component
             : Student::create($data);
 
         $student->kataTeams()->sync($this->kataTeamIds);
+        $student->trainingGroups()->sync($this->trainingGroupIds);
 
         $this->dispatch('students-changed');
         $this->dispatch('toast', message: "Spremljeno: {$student->last_name} {$student->first_name}");
@@ -225,9 +219,9 @@ final class StudentForm extends Component
     private function resetForm(): void
     {
         $this->reset([
-            'lastName', 'firstName', 'birthDate', 'oib', 'locationId', 'trainingGroupId',
+            'lastName', 'firstName', 'birthDate', 'oib',
             'belt', 'nextGradeStatus', 'nextGradeKyu', 'medicalValidUntil', 'hasNoMedical',
-            'parentName', 'parentPhone', 'parentEmail', 'note', 'flagT', 'kataTeamIds', 'submitted',
+            'parentName', 'parentPhone', 'parentEmail', 'note', 'flagT', 'kataTeamIds', 'trainingGroupIds', 'submitted',
         ]);
     }
 
@@ -240,8 +234,11 @@ final class StudentForm extends Component
         return view('livewire.student-form', [
             'ageCategory' => $birth ? AgeCategory::for($birth, $today) : null,
             'medicalStatus' => MedicalStatus::for($validUntil, $this->hasNoMedical, $today),
-            'locations' => Location::orderBy('name')->get(),
             'groups' => TrainingGroup::orderBy('name')->get(),
+            // Slots of the ticked groups, shown read-only so the trainer sees where the child will train.
+            'derivedSlots' => $this->trainingGroupIds === [] ? collect() : TrainingSlot::with('location')
+                ->whereHas('groups', fn ($q) => $q->whereIn('training_groups.id', $this->trainingGroupIds))
+                ->orderBy('sort_order')->get(),
             'belts' => Belt::options(),
             'kataTeams' => KataTeam::orderBy('name')->get(),
         ]);

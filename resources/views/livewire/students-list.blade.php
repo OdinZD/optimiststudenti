@@ -28,7 +28,7 @@
                 <span wire:loading.remove wire:target="medicalReminders">Podsjetnici (Excel)</span>
                 <span wire:loading wire:target="medicalReminders">Izvoz…</span>
             </button>
-            <button type="button" wire:click="$dispatch('new-student', { locationSlug: @js($location) })"
+            <button type="button" wire:click="$dispatch('new-student')"
                     class="h-11 px-4 rounded-[var(--r-control)] bg-[var(--acc)] text-white font-semibold text-[15px] transition hover:brightness-110">
                 + Novi polaznik
             </button>
@@ -63,11 +63,11 @@
                    class="w-full h-11 rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] pl-9 pr-3 text-[15px] text-[var(--ink)] focus:outline-none">
         </div>
 
-        <select wire:model.live="location" aria-label="Lokacija"
-                class="h-11 max-w-[190px] rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] px-3 text-[15px] text-[var(--ink)] max-[760px]:max-w-none max-[760px]:w-full">
-            <option value="">Sve lokacije</option>
-            @foreach ($locations as $loc)
-                <option value="{{ $loc->slug }}">{{ $loc->name }}</option>
+        <select wire:model.live="slot" aria-label="Termin"
+                class="h-11 max-w-[230px] rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] px-3 text-[15px] text-[var(--ink)] max-[760px]:max-w-none max-[760px]:w-full">
+            <option value="">Svi termini</option>
+            @foreach ($trainingSlots as $slotOption)
+                <option value="{{ $slotOption->slug }}">{{ $slotOption->label() }}</option>
             @endforeach
         </select>
 
@@ -158,8 +158,8 @@
     </div>
 
     {{-- Desktop table --}}
-    <div class="mt-4 bg-[var(--surface)] rounded-[var(--r-card)] border border-[var(--line)] overflow-hidden max-[760px]:hidden">
-        <table class="w-full border-collapse">
+    <div class="mt-4 bg-[var(--surface)] rounded-[var(--r-card)] border border-[var(--line)] overflow-x-auto max-[760px]:hidden">
+        <table class="w-full min-w-[820px] border-collapse">
             <thead>
                 <tr class="text-left text-[12px] font-semibold uppercase tracking-[0.05em] text-[var(--ink3)]">
                     <th class="px-4 py-3 font-semibold" style="width:250px">Polaznik</th>
@@ -191,14 +191,22 @@
                             @else
                                 <span class="ml-1 inline-block rounded-[var(--r-tag)] px-1.5 text-[11px] font-semibold align-middle" style="background:var(--st-soon-bg);color:var(--st-soon-fg)">nema izjavu</span>
                             @endif
-                            <div class="text-[13px] text-[var(--ink3)] mt-0.5">{{ $s->location?->name ?? '—' }}</div>
+                            @if ($s->hasLegacyLocationOnly())
+                                <div class="text-[13px] text-[var(--ink3)] mt-0.5 italic opacity-70" title="Stara lokacija: dijete još nema grupu s terminom">{{ $s->location->name }} (bez grupe)</div>
+                            @else
+                                <div class="text-[13px] text-[var(--ink3)] mt-0.5">{{ $s->training_locations->pluck('name')->implode(' · ') ?: '—' }}</div>
+                            @endif
                         </td>
                         <td class="px-4 py-3 align-top">
                             <x-belt-stripe :kyu="$s->belt_kyu?->value" />
                             <div class="mt-1"><x-next-grade-badge :status="$s->next_grade_status" :kyu="$s->next_grade_kyu" /></div>
                         </td>
-                        <td class="px-4 py-3 align-top text-[14px] {{ $s->trainingGroup ? 'text-[var(--ink)]' : 'text-[var(--ink3)]' }}">
-                            {{ $s->trainingGroup?->name ?? '—' }}
+                        <td class="px-4 py-3 align-top text-[14px]">
+                            @forelse ($s->trainingGroups->sortBy('name') as $grp)
+                                <span class="inline-block mr-1 mb-1 rounded-[var(--r-tag)] px-1.5 py-0.5 text-[12px] font-semibold" style="background:var(--neutral-pill);color:var(--ink2)">{{ $grp->name }}</span>
+                            @empty
+                                <span class="text-[var(--ink3)]">—</span>
+                            @endforelse
                         </td>
                         <td class="px-4 py-3 align-top">
                             @if ($age)
@@ -295,7 +303,11 @@
                         @else
                             <span class="ml-1 inline-block rounded-[var(--r-tag)] px-1.5 text-[11px] font-semibold align-middle" style="background:var(--st-soon-bg);color:var(--st-soon-fg)">nema izjavu</span>
                         @endif
-                        <div class="text-[13px] text-[var(--ink3)] mt-0.5">{{ $s->location?->name ?? '—' }}</div>
+                        @if ($s->hasLegacyLocationOnly())
+                                <div class="text-[13px] text-[var(--ink3)] mt-0.5 italic opacity-70" title="Stara lokacija: dijete još nema grupu s terminom">{{ $s->location->name }} (bez grupe)</div>
+                            @else
+                                <div class="text-[13px] text-[var(--ink3)] mt-0.5">{{ $s->training_locations->pluck('name')->implode(' · ') ?: '—' }}</div>
+                            @endif
                     </div>
                     <div class="flex items-center gap-1 shrink-0">
                         <button type="button" wire:click="report({{ $s->id }})" title="Izvješće (PDF)"

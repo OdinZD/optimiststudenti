@@ -39,6 +39,12 @@ final class AgeCategory
         public readonly ?string $nextLabel,
     ) {}
 
+    /** @return array<string, string> tier key => label, youngest first (for pickers) */
+    public static function options(): array
+    {
+        return array_column(self::TIERS, 'label', 'key');
+    }
+
     /** Null birth date => no category (filter "Bez datuma rođenja"). */
     public static function for(?CarbonInterface $birthDate, CarbonInterface $today): ?self
     {

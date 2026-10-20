@@ -93,26 +93,22 @@
                                     </select>
                                 </div>
                             </div>
-                            <div>
-                                <label for="f-group" class="block text-[13px] font-semibold text-[var(--ink2)] mb-1.5">Grupa</label>
-                                <select id="f-group" wire:model.live="trainingGroupId"
-                                        class="h-11 w-full rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] px-3 text-[15px] text-[var(--ink)] focus:outline-none">
-                                    <option value="">— bez grupe</option>
-                                    @foreach ($groups as $grp)
-                                        <option value="{{ $grp->id }}">{{ $grp->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
                         </div>
                         <div class="mt-4">
-                            <label for="f-loc" class="block text-[13px] font-semibold text-[var(--ink2)] mb-1.5">Lokacija / termin</label>
-                            <select id="f-loc" wire:model.live="locationId"
-                                    class="h-11 w-full rounded-[var(--r-control)] border border-[var(--line2)] bg-[var(--surface)] px-3 text-[15px] text-[var(--ink)] focus:outline-none">
-                                <option value="">— nije odabrano</option>
-                                @foreach ($locations as $loc)
-                                    <option value="{{ $loc->id }}">{{ $loc->name }}</option>
-                                @endforeach
-                            </select>
+                            <span class="block text-[13px] font-semibold text-[var(--ink2)] mb-1.5">Grupe</span>
+                            @foreach ($groups as $grp)
+                                <label class="inline-flex items-center gap-2 mr-4 mb-2">
+                                    <input type="checkbox" wire:model.live="trainingGroupIds" value="{{ $grp->id }}" class="w-4 h-4">
+                                    <span class="text-[14px] text-[var(--ink)]">{{ $grp->name }}</span>
+                                </label>
+                            @endforeach
+                            <p class="text-[13px] text-[var(--ink3)] mt-1">
+                                @if ($derivedSlots->isEmpty())
+                                    Termini se određuju prema grupama; bez grupe dijete nema termin.
+                                @else
+                                    <span class="font-semibold text-[var(--ink2)]">Treninzi:</span> {{ $derivedSlots->map(fn ($slot) => $slot->label())->implode(' · ') }}
+                                @endif
+                            </p>
                         </div>
                         <div class="mt-4">
                             <span class="block text-[13px] font-semibold text-[var(--ink2)] mb-1.5">Upis sljedećeg stupnja</span>

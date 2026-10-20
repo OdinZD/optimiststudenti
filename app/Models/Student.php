@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 final class Student extends Model
 {
@@ -66,9 +67,10 @@ final class Student extends Model
         return $this->belongsTo(Location::class);
     }
 
-    public function trainingGroup(): BelongsTo
+    /** @return BelongsToMany<TrainingGroup, $this> */
+    public function trainingGroups(): BelongsToMany
     {
-        return $this->belongsTo(TrainingGroup::class);
+        return $this->belongsToMany(TrainingGroup::class, 'student_training_group');
     }
 
     public function competitionResults(): HasMany
@@ -102,6 +104,41 @@ final class Student extends Model
         return $plans->contains(fn (StudentFeePlan $p): bool => $p->nacin_placanja === null
             && $p->valid_from->toDateString() <= $date
             && ($p->valid_until === null || $p->valid_until->toDateString() >= $date));
+    }
+
+    /**
+     * Training slots derived from the student's groups (never stored). Needs `trainingGroups.slots.location` eager-loaded in lists.
+     *
+     * @return Attribute<Collection<int, TrainingSlot>, never>
+     */
+    protected function trainingSlots(): Attribute
+    {
+        return Attribute::get(
+            fn (): Collection => $this->trainingGroups->flatMap(fn (TrainingGroup $g) => $g->slots)->unique('id')->sortBy('sort_order')->values(),
+        );
+    }
+
+    /**
+     * Distinct locations of the derived slots; falls back to the legacy single location for students without groups
+     * so existing data is not lost before groups are assigned.
+     *
+     * @return Attribute<Collection<int, Location>, never>
+     */
+    protected function trainingLocations(): Attribute
+    {
+        return Attribute::get(function (): Collection {
+            if ($this->hasLegacyLocationOnly()) {
+                return collect([$this->location]);
+            }
+
+            return $this->training_slots->map(fn (TrainingSlot $slot) => $slot->location)->filter()->unique('id')->values();
+        });
+    }
+
+    /** True when no slot can be derived (no groups with slots) but the old single location is still set — shown dimmed in the list. */
+    public function hasLegacyLocationOnly(): bool
+    {
+        return $this->training_slots->isEmpty() && $this->location !== null;
     }
 
     /** @return Attribute<?AgeCategory, never> */

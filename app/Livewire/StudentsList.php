@@ -6,9 +6,9 @@ namespace App\Livewire;
 
 use App\Enums\Belt;
 use App\Enums\NextGradeStatus;
-use App\Models\Location;
 use App\Models\Student;
 use App\Models\TrainingGroup;
+use App\Models\TrainingSlot;
 use App\Support\AgeCategory;
 use App\Support\ChildReport;
 use App\Support\CompetitionExport;
@@ -44,8 +44,9 @@ final class StudentsList extends Component
     #[Url(as: 'uzrast', except: '')]
     public string $ageKey = '';
 
-    #[Url(as: 'lokacija', except: '')]
-    public string $location = '';
+    /** Training slot (termin) slug; students match through their groups. */
+    #[Url(as: 'termin', except: '')]
+    public string $slot = '';
 
     #[Url(as: 'grupa', except: '')]
     public string $group = '';
@@ -95,16 +96,19 @@ final class StudentsList extends Component
 
     public function resetFilters(): void
     {
-        $this->reset(['search', 'ageKey', 'location', 'group', 'belt', 'expiredOnly', 'expiringSoonOnly', 'toRegisterOnly', 'noDeclarationOnly', 'crossingSoonOnly', 'noPaymentMethodOnly']);
+        $this->reset(['search', 'ageKey', 'slot', 'group', 'belt', 'expiredOnly', 'expiringSoonOnly', 'toRegisterOnly', 'noDeclarationOnly', 'crossingSoonOnly', 'noPaymentMethodOnly']);
     }
 
     /** Export the currently filtered students to an .xlsx roster (no OIB, no medical). */
     public function export()
     {
+        // Uz aktivan filter termina izvoz je "popis polaznika po terminu": termin ide u naslov i ime datoteke.
+        $slot = $this->slot !== '' ? TrainingSlot::with('location')->where('slug', $this->slot)->first() : null;
+
         return $this->downloadXlsx(
             CompetitionExport::build($this->rows(), $this->today()),
-            'polaznici-'.$this->today()->format('Y-m-d').'.xlsx',
-            'Popis polaznika',
+            'polaznici-'.($slot !== null ? $slot->slug.'-' : '').$this->today()->format('Y-m-d').'.xlsx',
+            $slot !== null ? 'Popis polaznika · '.$slot->label() : 'Popis polaznika',
         );
     }
 
@@ -165,7 +169,7 @@ final class StudentsList extends Component
     {
         return $this->search !== ''
             || $this->ageKey !== ''
-            || $this->location !== ''
+            || $this->slot !== ''
             || $this->group !== ''
             || $this->belt !== ''
             || $this->expiredOnly
@@ -179,7 +183,7 @@ final class StudentsList extends Component
     /** All non-deleted students, loaded once per request. */
     private function allStudents(): Collection
     {
-        $with = ['location', 'trainingGroup', 'kataTeams', 'declaration'];
+        $with = ['location', 'trainingGroups.slots.location', 'kataTeams', 'declaration'];
 
         if (config('features.payments')) {
             $with[] = 'studentFeePlans'; // za oznaku "Nedostaje način plaćanja"
@@ -209,11 +213,11 @@ final class StudentsList extends Component
             }
         }
 
-        if ($this->location !== '' && $student->location?->slug !== $this->location) {
+        if ($this->slot !== '' && ! $student->training_slots->contains('slug', $this->slot)) {
             return false;
         }
 
-        if ($this->group !== '' && $student->trainingGroup?->slug !== $this->group) {
+        if ($this->group !== '' && ! $student->trainingGroups->contains('slug', $this->group)) {
             return false;
         }
 
@@ -340,7 +344,7 @@ final class StudentsList extends Component
             'noPaymentMethodCount' => config('features.payments')
                 ? $this->allStudents()->filter(fn (Student $s): bool => $s->missingPaymentMethod($today))->count()
                 : 0,
-            'locations' => Location::orderBy('name')->get(),
+            'trainingSlots' => TrainingSlot::with('location')->orderBy('sort_order')->get(),
             'groups' => TrainingGroup::orderBy('name')->get(),
             'belts' => Belt::options(),
             'subtitle' => $this->subtitle($rows->count()),
