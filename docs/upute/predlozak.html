@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Optimist — upute za trenere</title>
+<style>
+  /* Sistemski font s punom podrškom za č ć đ š ž (ugrađeni brand-fontovi imaju samo latin podskup). */
+  @page { size: A4; margin: 16mm 17mm 17mm 17mm; @bottom-center { content: "Optimist — upute za trenere · stranica " counter(page); font: 8.5pt "Helvetica Neue", Arial, sans-serif; color: #6b7280; } }
+  @page :first { @bottom-center { content: none; } }
+  :root { --acc: #2D3E7B; --ink: #14171F; --muted: #5b6475; --line: #d8dce6; --tint: #e9ecf7; }
+  * { box-sizing: border-box; }
+  body { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 10pt; line-height: 1.45; color: var(--ink); }
+  h1, h2, h3 { color: var(--acc); line-height: 1.25; }
+  h2 { font-size: 19pt; margin: 0 0 6mm; padding-bottom: 2mm; border-bottom: 2px solid var(--acc); break-before: page; break-after: avoid; }
+  h2.first, h2.nobreak { break-before: auto; margin-top: 9mm; }
+  h3 { font-size: 12.5pt; margin: 6mm 0 2mm; break-after: avoid; }
+  p, li { orphans: 3; widows: 3; }
+  li { margin: 1mm 0; }
+  strong { color: var(--ink); }
+  hr { display: none; }
+  img { display: block; width: 66%; margin: 3mm auto 4mm; border: 1px solid var(--line); border-radius: 3px; break-inside: avoid; }
+  img[alt="Prijava"] { width: 44%; }
+  img[alt="Izbornik na mobitelu"] { width: 24%; }
+  table { width: 100%; border-collapse: collapse; margin: 3mm 0 5mm; font-size: 9.5pt; break-inside: avoid; }
+  th { background: var(--acc); color: #fff; text-align: left; padding: 2mm 2.5mm; }
+  td { padding: 1.8mm 2.5mm; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f7fb; }
+  blockquote { margin: 4mm 0; padding: 3mm 4mm; background: #fff4e5; border-left: 4px solid #e08a00; break-inside: avoid; }
+  blockquote p { margin: 1mm 0; }
+  .cover { height: 245mm; break-after: page; display: flex; flex-direction: column; }
+  .cover .logo { width: 22mm; margin: 12mm 0 0; border: 0; border-radius: 0; }
+  .cover h1 { font-size: 34pt; margin: 14mm 0 3mm; }
+  .cover .sub { font-size: 13pt; color: var(--muted); margin: 0 0 14mm; }
+  .cover h4 { font-size: 11pt; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 0 0 3mm; }
+  .cover ul { margin: 0; padding: 0; list-style: none; font-size: 12pt; line-height: 1.9; }
+</style>
+</head>
+<body>
+<section class="cover">
+  <img class="logo" src="{{LOGO}}" alt="">
+  <h1>{{TITLE}}</h1>
+  <p class="sub">{{SUBTITLE}}</p>
+  <h4>Sadržaj</h4>
+  <ul>{{TOC}}</ul>
+</section>
+{{BODY}}
+</body>
+</html>
