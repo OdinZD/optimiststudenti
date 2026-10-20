@@ -10,7 +10,7 @@ Produkcija je cPanel dijeljeni hosting (`docs/deploy-cpanel-noterminal.md`). Diz
 Produkcijska baza je MariaDB/MySQL (`pdo_mysql`), uvoz kroz phpMyAdmin. Testovi koriste SQLite `:memory:`.
 
 ## Alternatives Considered
-PostgreSQL — dostupnost na cPanel hostingu nije zapisana u repozitoriju. [NEJASNO: je li PostgreSQL bio nedostupan na hostingu ili je jednostavno odabran MariaDB; pitati vlasnika.]
+PostgreSQL — odbačen jer cPanel hosting na kojem aplikacija radi nudi MySQL/MariaDB, a ne PostgreSQL (izvor: vlasnik, 2026-10-20).
 
 ## Consequences
 - Migracije i SQL skripte moraju raditi na MariaDB-u; sortiranje hrvatskih znakova rješava `CroatianCollator` u PHP-u (`ext-intl`).
