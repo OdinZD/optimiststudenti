@@ -10,7 +10,7 @@ Mnoge vrijednosti ovise o vremenu ili o drugim zapisima: uzrasna kategorija, sta
 Te se vrijednosti računaju iz izvornih podataka pri čitanju: `AgeCategory` (iz datuma rođenja), `MedicalStatus` (`SoonExpiring` kad je do isteka 0–30 dana, `Expired` kad je istekao), `ChargeStatus` (iz zaduženja i alokacija; redoslijed WrittenOff → Paid → Overdue → Partial → Unpaid), `Medal` (iz mjesta), `Student::training_slots` / `training_locations` (iz grupa).
 
 ## Alternatives Considered
-Spremanje u stupce zahtijevalo bi periodično ažuriranje, a na hostingu nema crona (vidi [11](../tehnicka/11-poznata-ogranicenja.md)). Taj razlog je **zaključak iz stanja sustava**, ne izričito zapisana odluka. [Potvrditi s vlasnikom.]
+Spremanje izvedenih vrijednosti u stupce — razlog odbacivanja nije zabilježen. (Obrazloženje „hosting nema crona“ je pogrešno: cPanel ima Cron Jobs, potvrdio vlasnik 2026-10-20.) [Pitanje za vlasnika: koji je stvarni razlog?]
 
 ## Consequences
 - Nema zastarjelih podataka i nema posla koji ih osvježava.

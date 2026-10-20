@@ -19,7 +19,7 @@ Ovo su nalazi pronađeni čitanjem koda tijekom izrade dokumentacije. **Ništa o
 
 | # | Nalaz | Ozbiljnost | Gdje |
 |---|---|---|---|
-| 6 | Na produkciji nema crona (`schedule:run`) ni queue workera: mjesečna zaduženja i eRačuni poslovi se ne izvršavaju sami | S (kad se Članarine uključe) | `routes/console.php`, [10-deploy-i-operacije.md](10-deploy-i-operacije.md) |
+| 6 | Na produkciji nisu postavljeni cron (`schedule:run`) ni queue worker (cPanel ima Cron Jobs, ali nisu podešeni): mjesečna zaduženja i eRačuni poslovi se ne izvršavaju sami | S (kad se Članarine uključe) | `routes/console.php`, [10-deploy-i-operacije.md](10-deploy-i-operacije.md) |
 | 7 | `StudentSeeder` upisuje samo stari stupac `training_group_id`, ne pivot grupa | N | `database/seeders/StudentSeeder.php` |
 | 8 | `FeePlansSeeder` bi ponovno stvorio tarifu „1× tjedno" ako je obrisana | N | `database/seeders/FeePlansSeeder.php` |
 | 9 | Stupac `charges.invoice_status` se ne koristi | N | `app/Models/Charge.php` |

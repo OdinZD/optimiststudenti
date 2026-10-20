@@ -92,7 +92,7 @@ Tablice Članarina **postoje u bazi i kad je flag isključen** (migracije se uvi
 
 ## Raspored (scheduler)
 
-`routes/console.php` registrira `clanarine:zaduzi` svakog 1. u mjesecu u 06:00. **Na produkciji nema cron zadatka koji bi pokretao `schedule:run`**, pa se to ne izvršava samo od sebe; vidi [11-poznata-ogranicenja.md](11-poznata-ogranicenja.md) i [10-deploy-i-operacije.md](10-deploy-i-operacije.md).
+`routes/console.php` registrira `clanarine:zaduzi` svakog 1. u mjesecu u 06:00. **Na produkciji cron zadatak za `schedule:run` nije postavljen** (cPanel ima Cron Jobs, samo nije podešen), pa se to ne izvršava samo od sebe; vidi [11-poznata-ogranicenja.md](11-poznata-ogranicenja.md) i [10-deploy-i-operacije.md](10-deploy-i-operacije.md).
 
 ## Od pokretanja do odgovora
 
