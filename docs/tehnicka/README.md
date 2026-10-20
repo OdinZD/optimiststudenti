@@ -40,6 +40,12 @@ php docs/tehnicka/alati/provjeri.php
 MERMAID_DIR=/tmp/mermaid-provjera node docs/tehnicka/alati/mermaid.cjs
 ```
 
+Jedan PDF cijele dokumentacije (s Mermaid dijagramima; zahtijeva iste privremene alate kao `mermaid.cjs`):
+
+```bash
+php docs/tehnicka/alati/izradi-pdf.php   # izlaz: docs/tehnicka/Tehnicka-dokumentacija.pdf (nije u gitu, ~11 MB)
+```
+
 Pravilo: kad se mijenja shema, ruta, javna metoda Livewire komponente, env varijabla ili događaj, ažuriraj pripadni dokument i pokreni provjeru. Odluke koje mijenjaju smjer dodaju se kao novi ADR.
 
 ## Rječnik
