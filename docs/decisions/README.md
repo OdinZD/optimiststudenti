@@ -6,7 +6,7 @@ Kratki zapisi važnih odluka u projektu (predložak: Status, Datum, Context, Dec
 |---|---|---|
 | [0001](0001-livewire-class-komponente-i-tailwind.md) | Livewire 4 class komponente + Tailwind v4 | da (vlasnik) |
 | [0002](0002-mariadb-na-produkciji.md) | MariaDB na produkciji | da (vlasnik) |
-| [0003](0003-izracunato-ne-spremljeno.md) | Izvedeno se računa, ne sprema | ne |
+| [0003](0003-izracunato-ne-spremljeno.md) | Izvedeno se računa, ne sprema | da (vlasnik) |
 | [0004](0004-novac-u-centima-bez-brisanja.md) | Novac u centima, storno, audit | ne |
 | [0005](0005-feature-flag-clanarine.md) | Feature flag Članarine | da (kod) |
 | [0006](0006-eracuni-izdaje-racune.md) | eRačuni izdaje račune; HUB-3 otkazan | da (vlasnik) |
